@@ -105,7 +105,7 @@ export function Dashboard({ accessToken }: DashboardProps) {
   if (!dashboardData) {
     return (
       <div style={{ padding: '20px' }}>
-        <h2>Welcome to Your Canvas Dashboard</h2>
+        <h2>Welcome to Your Canvas Tracker</h2>
         <p>Click the button below to load your courses, assignments, and announcements from Canvas.</p>
         <button 
           onClick={refreshData}

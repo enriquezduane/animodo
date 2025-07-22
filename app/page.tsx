@@ -23,7 +23,7 @@ export default function Home() {
     return (
       <div>
         <div style={{ padding: '20px', borderBottom: '1px solid #ccc' }}>
-          <h1>Animodo - Canvas Dashboard</h1>
+          <h1>Animodo - Canvas Tracker</h1>
           <button onClick={handleLogout}>
             Logout
           </button>
