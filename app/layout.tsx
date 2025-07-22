@@ -1,19 +1,8 @@
 import type { Metadata } from "next";
-import { Montserrat, Open_Sans } from "next/font/google";
-
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin"],
-});
-
-const openSans = Open_Sans({
-  variable: "--font-open-sans",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Animodo",
-  description: "DLSU Assignment Tracker",
+  description: "DLSU Canvas Tracker",
 };
 
 export default function RootLayout({
@@ -23,7 +12,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} ${openSans.variable} antialiased`}>
+      <body>
         {children}
       </body>
     </html>
