@@ -36,7 +36,19 @@ function formatDateAgo(dateString: string | null | undefined): string {
   const diffMs = now.getTime() - targetDate.getTime();
   const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   
-  if (days === 0) return 'Today';
+  // If it's today, show hours and minutes
+  if (days === 0) {
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (hours === 0) {
+      if (minutes === 0) return 'Just now';
+      return `${minutes}m ago`;
+    } else {
+      return `${hours}h ${minutes}m ago`;
+    }
+  }
+  
   if (days === 1) return 'Yesterday';
   if (days < 7) return `${days}d ago`;
   if (days < 14) return `${Math.floor(days / 7)}w ago`;
@@ -124,16 +136,18 @@ export function Dashboard({ accessToken }: DashboardProps) {
         }
       }
 
-      // Filter by submitted status (default: hide submitted)
-      if (!showSubmitted) {
+      // Filter by submitted status - for overview, always hide submitted; for assignments, use checkbox
+      const shouldHideSubmitted = activeView === 'overview' ? true : !showSubmitted;
+      if (shouldHideSubmitted) {
         assignments = assignments.filter(a => 
           a.submission_status === 'Not Submitted' || 
           a.submission_status === 'Pending Review'
         );
       }
 
-      // Filter by 15-day threshold (default: hide assignments > 15 days overdue or due > 15 days)
-      if (!showOver15Days) {
+      // Filter by 15-day threshold - for overview, always hide > 15 days; for assignments, use checkbox
+      const shouldHideOver15Days = activeView === 'overview' ? true : !showOver15Days;
+      if (shouldHideOver15Days) {
         assignments = assignments.filter(a => {
           if (!a.due_at) return true; // Keep assignments without due dates
           const dueDate = new Date(a.due_at);
@@ -147,8 +161,8 @@ export function Dashboard({ accessToken }: DashboardProps) {
         });
       }
 
-      // Filter by selected courses
-      if (selectedCourses.length > 0) {
+      // Filter by selected courses - only for assignments page
+      if (activeView === 'assignments' && selectedCourses.length > 0) {
         assignments = assignments.filter(a => selectedCourses.includes(a.course_id.toString()));
         announcements = announcements.filter(a => selectedCourses.includes(a.course_id.toString()));
       }
@@ -311,6 +325,24 @@ export function Dashboard({ accessToken }: DashboardProps) {
       }
     };
 
+    const formatSubmissionTypes = (types: string[]): string => {
+      const typeMap: Record<string, string> = {
+        'online_text_entry': 'Text Entry',
+        'online_url': 'Website URL',
+        'online_upload': 'File Upload',
+        'media_recording': 'Media Recording', 
+        'student_annotation': 'Student Annotation',
+        'online_quiz': 'Online Quiz',
+        'discussion_topic': 'Discussion',
+        'external_tool': 'External Tool',
+        'on_paper': 'On Paper',
+        'none': 'No Submission',
+        'not_graded': 'Not Graded'
+      };
+      
+      return types.map(type => typeMap[type] || type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())).join(', ');
+    };
+
     return (
       <div className={`border-l-4 rounded-lg p-4 mb-3 ${urgencyColors[urgency]} shadow-sm`}>
         <div className="flex items-start justify-between">
@@ -357,8 +389,8 @@ export function Dashboard({ accessToken }: DashboardProps) {
             {!compact && (
               <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
                 <span>{assignment.points_possible ? `${assignment.points_possible} pts` : 'No points'}</span>
-                {assignment.submission_types && (
-                  <span>Type: {assignment.submission_types.join(', ')}</span>
+                {assignment.submission_types && assignment.submission_types.length > 0 && (
+                  <span>Type: {formatSubmissionTypes(assignment.submission_types)}</span>
                 )}
               </div>
             )}
@@ -535,7 +567,7 @@ export function Dashboard({ accessToken }: DashboardProps) {
             </div>
             
             <div className="flex items-center gap-2">
-              {(activeView === 'assignments' || activeView === 'overview') && (
+              {activeView === 'assignments' && (
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className="p-2 text-gray-500 hover:text-gray-700 lg:hidden"
@@ -548,8 +580,8 @@ export function Dashboard({ accessToken }: DashboardProps) {
             </div>
           </div>
 
-                                {/* Filters - Show on assignments and overview tabs */}
-           {(activeView === 'assignments' || activeView === 'overview') && (
+                                {/* Filters - Only show on assignments tab */}
+           {activeView === 'assignments' && (
              <div className={`mt-4 space-y-3 lg:space-y-0 lg:flex lg:items-center lg:gap-6 ${showFilters ? 'block' : 'hidden lg:flex'}`}>
                {/* Course Filter */}
                {processedData && processedData.courses.length > 0 && (
