@@ -78,6 +78,8 @@ export function Dashboard({ accessToken }: DashboardProps) {
   const [selectedCourses, setSelectedCourses] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [hide20DaysOverdue, setHide20DaysOverdue] = useState(true);
+  const [showSubmitted, setShowSubmitted] = useState(false);
+  const [showOver15Days, setShowOver15Days] = useState(false);
   
   const canvas = useCanvas({
     accessToken,
@@ -99,23 +101,49 @@ export function Dashboard({ accessToken }: DashboardProps) {
     let assignments = Object.values(dashboardData.entities.assignments);
     let announcements = Object.values(dashboardData.entities.announcements);
 
-    // Only apply filters on assignments page
-    const shouldApplyFilters = activeView === 'assignments';
+    // Apply filters on assignments page and overview page
+    const shouldApplyFilters = activeView === 'assignments' || activeView === 'overview';
 
     if (shouldApplyFilters) {
-      // For upcoming view, only show future assignments
-      if (assignmentView === 'upcoming') {
-        assignments = assignments.filter(a => {
-          if (!a.due_at) return true; // Keep assignments without due dates
-          return new Date(a.due_at).getTime() > now.getTime();
-        });
+      // For assignments page only - filter by view type
+      if (activeView === 'assignments') {
+        // For upcoming view, only show future assignments
+        if (assignmentView === 'upcoming') {
+          assignments = assignments.filter(a => {
+            if (!a.due_at) return true; // Keep assignments without due dates
+            return new Date(a.due_at).getTime() > now.getTime();
+          });
+        }
+
+        // For overdue view, only show overdue assignments
+        if (assignmentView === 'overdue') {
+          assignments = assignments.filter(a => {
+            if (!a.due_at) return false; // Exclude assignments without due dates
+            return new Date(a.due_at).getTime() < now.getTime();
+          });
+        }
       }
 
-      // For overdue view, only show overdue assignments
-      if (assignmentView === 'overdue') {
+      // Filter by submitted status (default: hide submitted)
+      if (!showSubmitted) {
+        assignments = assignments.filter(a => 
+          a.submission_status === 'Not Submitted' || 
+          a.submission_status === 'Pending Review'
+        );
+      }
+
+      // Filter by 15-day threshold (default: hide assignments > 15 days overdue or due > 15 days)
+      if (!showOver15Days) {
         assignments = assignments.filter(a => {
-          if (!a.due_at) return false; // Exclude assignments without due dates
-          return new Date(a.due_at).getTime() < now.getTime();
+          if (!a.due_at) return true; // Keep assignments without due dates
+          const dueDate = new Date(a.due_at);
+          const timeDiff = dueDate.getTime() - now.getTime();
+          const daysDiff = timeDiff / (1000 * 60 * 60 * 24);
+          
+          // Keep assignments that are:
+          // - Due within 15 days in the future (daysDiff > 0 && daysDiff <= 15)
+          // - Overdue by 15 days or less (daysDiff < 0 && daysDiff >= -15)
+          return daysDiff >= -15 && daysDiff <= 15;
         });
       }
 
@@ -205,7 +233,7 @@ export function Dashboard({ accessToken }: DashboardProps) {
          totalAnnouncements: announcements.length,
        },
      };
-     }, [dashboardData, selectedCourses, activeView, assignmentView, hide20DaysOverdue]);
+     }, [dashboardData, selectedCourses, activeView, assignmentView, hide20DaysOverdue, showSubmitted, showOver15Days]);
 
   if (canvas.error) {
     return (
@@ -290,7 +318,11 @@ export function Dashboard({ accessToken }: DashboardProps) {
             {/* Title and Lock Status */}
             <div className="flex items-center gap-2 mb-2">
               <h3 className="font-semibold text-gray-900 text-base">{assignment.name}</h3>
-              {assignment.locked_for_user && <span className="text-xl">🔒</span>}
+              {assignment.locked_for_user && (
+                <span className="bg-red-100 text-red-800 px-2 py-1 rounded text-xs font-medium">
+                  LOCKED
+                </span>
+              )}
             </div>
             
             {/* Course */}
@@ -503,7 +535,7 @@ export function Dashboard({ accessToken }: DashboardProps) {
             </div>
             
             <div className="flex items-center gap-2">
-              {activeView === 'assignments' && (
+              {(activeView === 'assignments' || activeView === 'overview') && (
                 <button
                   onClick={() => setShowFilters(!showFilters)}
                   className="p-2 text-gray-500 hover:text-gray-700 lg:hidden"
@@ -516,9 +548,9 @@ export function Dashboard({ accessToken }: DashboardProps) {
             </div>
           </div>
 
-                                {/* Filters - Only show on assignments tab */}
-           {activeView === 'assignments' && (
-             <div className={`mt-4 lg:flex lg:items-center lg:gap-4 ${showFilters ? 'block' : 'hidden lg:flex'}`}>
+                                {/* Filters - Show on assignments and overview tabs */}
+           {(activeView === 'assignments' || activeView === 'overview') && (
+             <div className={`mt-4 space-y-3 lg:space-y-0 lg:flex lg:items-center lg:gap-6 ${showFilters ? 'block' : 'hidden lg:flex'}`}>
                {/* Course Filter */}
                {processedData && processedData.courses.length > 0 && (
                  <select
@@ -534,6 +566,34 @@ export function Dashboard({ accessToken }: DashboardProps) {
                    ))}
                  </select>
                )}
+
+               {/* Show Submitted Filter */}
+               <div className="flex items-center gap-2">
+                 <input
+                   type="checkbox"
+                   id="showSubmitted"
+                   checked={showSubmitted}
+                   onChange={(e) => setShowSubmitted(e.target.checked)}
+                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                 />
+                 <label htmlFor="showSubmitted" className="text-sm text-gray-600">
+                   Show submitted
+                 </label>
+               </div>
+
+               {/* Show Over 15 Days Filter */}
+               <div className="flex items-center gap-2">
+                 <input
+                   type="checkbox"
+                   id="showOver15Days"
+                   checked={showOver15Days}
+                   onChange={(e) => setShowOver15Days(e.target.checked)}
+                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                 />
+                 <label htmlFor="showOver15Days" className="text-sm text-gray-600">
+                   Show overdue/due &gt; 15 days
+                 </label>
+               </div>
              </div>
            )}
          </header>
