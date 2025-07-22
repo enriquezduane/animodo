@@ -1,17 +1,10 @@
 import Link from 'next/link';
+import { Header } from '@/components/Header';
 
 export default function AboutPage() {
   return (
     <div>
-      <header>
-        <h1>Animodo - DLSU Canvas Tracker</h1>
-        <nav>
-          <Link href="/">Home</Link>
-          <Link href="/tutorial">Tutorial</Link>
-          <Link href="/about">About</Link>
-          <Link href="/dashboard">Dashboard</Link>
-        </nav>
-      </header>
+      <Header />
 
       <main>
         <h2>About Animodo</h2>
@@ -53,7 +46,7 @@ export default function AboutPage() {
         <p>To use Animodo:</p>
         <ol>
           <li>Get your Canvas access token by following our tutorial</li>
-          <li>Enter your token in the dashboard</li>
+          <li>Enter your token in the homepage</li>
           <li>Start tracking your assignments!</li>
         </ol>
 
@@ -61,11 +54,7 @@ export default function AboutPage() {
         
         <br />
         
-        <Link href="/dashboard">Go to Dashboard</Link>
-
-        <br />
-
-        <Link href="/">Back to Home</Link>
+        <Link href="/">Go to Homepage to get started</Link>
       </main>
     </div>
   );

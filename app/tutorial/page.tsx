@@ -1,17 +1,10 @@
 import Link from 'next/link';
+import { Header } from '@/components/Header';
 
 export default function TutorialPage() {
   return (
     <div>
-      <header>
-        <h1>Animodo - DLSU Canvas Tracker</h1>
-        <nav>
-          <Link href="/">Home</Link>
-          <Link href="/tutorial">Tutorial</Link>
-          <Link href="/about">About</Link>
-          <Link href="/dashboard">Dashboard</Link>
-        </nav>
-      </header>
+      <Header />
 
       <main>
         <h2>How to Get Your Canvas Access Token</h2>
@@ -42,7 +35,7 @@ export default function TutorialPage() {
         </ul>
 
         <h3>Ready to Use Your Token?</h3>
-        <Link href="/dashboard">Go to Dashboard</Link>
+        <Link href="/">Go to Homepage to enter your token</Link>
 
         <h3>Need More Help?</h3>
         <p>If you're having trouble getting your access token, you can:</p>
@@ -51,8 +44,6 @@ export default function TutorialPage() {
           <li>Refer to the Canvas documentation</li>
           <li>Ask a classmate who has already set up their token</li>
         </ul>
-
-        <Link href="/">Back to Home</Link>
       </main>
     </div>
   );
