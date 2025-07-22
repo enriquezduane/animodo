@@ -60,7 +60,7 @@ export interface Announcement {
   id: number;
   title: string;
   message: string;
-  posted_at: string;
+  posted_at: string | null;
   url: string;
   context_code: string;
   author: {
@@ -72,7 +72,7 @@ export interface Announcement {
 export interface ProcessedAnnouncement {
   id: number;
   title: string;
-  posted_at: string;
+  posted_at: string | null;
   url: string;
   course_id: number;
 }

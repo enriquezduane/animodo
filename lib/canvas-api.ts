@@ -129,8 +129,18 @@ export class CanvasApiService {
     const url = `${canvasUrl}/api/v1/announcements`;
     const contextCodes = courseIds.map(id => `course_${id}`);
     
+    // Set a very wide date range to get ALL announcements
+    // Use a date far in the past to ensure we get everything
+    const startDate = '2000-01-01'; // Far enough back to catch all announcements
+    const endDate = new Date();
+    endDate.setFullYear(endDate.getFullYear() + 1); // One year in the future to be safe
+    
     return this.getPaginatedResults<Announcement>(url, accessToken, {
       'context_codes[]': contextCodes,
+      'start_date': startDate,
+      'end_date': endDate.toISOString().split('T')[0], // Format as yyyy-mm-dd
+      'active_only': false, // Include both published and unpublished
+      'latest_only': false, // Get all announcements, not just the latest
       'per_page': 100,
     });
   }

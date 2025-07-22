@@ -31,8 +31,18 @@ function formatDateWithRemaining(dateString: string): string {
 }
 
 // Helper function to format dates showing time ago
-function formatDateAgo(dateString: string): string {
+function formatDateAgo(dateString: string | null | undefined): string {
+  if (!dateString) {
+    return 'Date Unknown';
+  }
+  
   const targetDate = new Date(dateString);
+  
+  // Check if date is valid
+  if (isNaN(targetDate.getTime())) {
+    return 'Invalid Date';
+  }
+  
   const now = new Date();
   const diffMs = now.getTime() - targetDate.getTime();
   
@@ -338,10 +348,16 @@ export function Dashboard({ accessToken }: DashboardProps) {
 
       {activeTab === 'announcements' && (
         <div>
-          <h2>Recent Announcements</h2>
+          <h2>All Announcements</h2>
           <div>
             {Object.values(dashboardData.entities.announcements)
-              .sort((a, b) => new Date(b.posted_at).getTime() - new Date(a.posted_at).getTime())
+              .sort((a, b) => {
+                // Handle null dates - put them at the end
+                if (!a.posted_at && !b.posted_at) return 0;
+                if (!a.posted_at) return 1;
+                if (!b.posted_at) return -1;
+                return new Date(b.posted_at).getTime() - new Date(a.posted_at).getTime();
+              })
               .map((announcement) => {
                 const course = dashboardUtils.getCourse(dashboardData, announcement.course_id);
                 return (
@@ -356,7 +372,7 @@ export function Dashboard({ accessToken }: DashboardProps) {
                 );
               })}
             {Object.keys(dashboardData.entities.announcements).length === 0 && (
-              <p>No recent announcements</p>
+              <p>No announcements found</p>
             )}
           </div>
         </div>
