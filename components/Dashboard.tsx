@@ -4,6 +4,58 @@ import { useState } from 'react';
 import { useCanvas, dashboardUtils } from '@/lib/use-canvas';
 import { DashboardData } from '@/types/canvas';
 
+// Helper function to format dates with remaining time
+function formatDateWithRemaining(dateString: string): string {
+  const targetDate = new Date(dateString);
+  const now = new Date();
+  const diffMs = targetDate.getTime() - now.getTime();
+  
+  // Format the date part
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const month = monthNames[targetDate.getMonth()];
+  const day = targetDate.getDate();
+  
+  // Calculate remaining time
+  if (diffMs < 0) {
+    // Past date
+    const pastDays = Math.floor(Math.abs(diffMs) / (1000 * 60 * 60 * 24));
+    const pastHours = Math.floor((Math.abs(diffMs) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    return `${month} ${day} (${pastDays} Days ${pastHours} Hours Overdue)`;
+  } else {
+    // Future date
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    return `${month} ${day} (${days} Days ${hours} Hours Remaining)`;
+  }
+}
+
+// Helper function to format dates showing time ago
+function formatDateAgo(dateString: string): string {
+  const targetDate = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - targetDate.getTime();
+  
+  // Format the date part
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const month = monthNames[targetDate.getMonth()];
+  const day = targetDate.getDate();
+  
+  // Calculate time ago
+  if (diffMs < 0) {
+    // Future date (shouldn't happen for announcements, but just in case)
+    const futureDays = Math.floor(Math.abs(diffMs) / (1000 * 60 * 60 * 24));
+    const futureHours = Math.floor((Math.abs(diffMs) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    return `${month} ${day} (${futureDays} Days ${futureHours} Hours From Now)`;
+  } else {
+    // Past date
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    return `${month} ${day} (${days} Days ${hours} Hours Ago)`;
+  }
+}
+
 interface DashboardProps {
   accessToken: string;
 }
@@ -139,9 +191,10 @@ export function Dashboard({ accessToken }: DashboardProps) {
                     <li key={assignment.id} style={{ marginBottom: '10px' }}>
                                              <strong>{assignment.name}</strong><br />
                        Course: {course?.name}<br />
-                       Due: {new Date(assignment.due_at!).toLocaleDateString()}<br />
+                       Due: {formatDateWithRemaining(assignment.due_at!)}<br />
                        Status: {assignment.submission_status}<br />
                        {assignment.locked_for_user && <span style={{ color: 'orange' }}>🔒 Locked</span>}<br />
+                       {assignment.lock_info?.unlock_at && <span style={{ color: 'blue' }}>Unlocks: {formatDateWithRemaining(assignment.lock_info.unlock_at)}</span>}<br />
                        <a href={assignment.html_url} target="_blank" rel="noopener noreferrer">
                          View Assignment
                        </a>
@@ -164,8 +217,9 @@ export function Dashboard({ accessToken }: DashboardProps) {
                     <li key={assignment.id} style={{ marginBottom: '10px' }}>
                                              <strong style={{ color: 'red' }}>{assignment.name}</strong><br />
                        Course: {course?.name}<br />
-                       Was Due: {new Date(assignment.due_at!).toLocaleDateString()}<br />
+                       Was Due: {formatDateWithRemaining(assignment.due_at!)}<br />
                        {assignment.locked_for_user && <span style={{ color: 'orange' }}>🔒 Locked</span>}<br />
+                       {assignment.lock_info?.unlock_at && <span style={{ color: 'blue' }}>Unlocks: {formatDateWithRemaining(assignment.lock_info.unlock_at)}</span>}<br />
                        <a href={assignment.html_url} target="_blank" rel="noopener noreferrer">
                          Submit Assignment
                        </a>
@@ -217,10 +271,21 @@ export function Dashboard({ accessToken }: DashboardProps) {
                     <div key={assignment.id} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
                                              <h4>{assignment.name} {assignment.locked_for_user && <span style={{ color: 'orange' }}>🔒</span>}</h4>
                        <p>Course: {course?.name}</p>
-                       <p>Due: {new Date(assignment.due_at!).toLocaleString()}</p>
+                       <p>Due: {formatDateWithRemaining(assignment.due_at!)}</p>
                        <p>Points: {assignment.points_possible || 'N/A'}</p>
                        <p>Status: {assignment.submission_status}</p>
+                       <p>Submission Types: {assignment.submission_types.join(', ')}</p>
                        {assignment.locked_for_user && <p style={{ color: 'orange' }}>This assignment is locked for you</p>}
+                       {assignment.lock_info?.unlock_at && (
+                         <p style={{ color: 'blue' }}>
+                           Unlocks: {formatDateWithRemaining(assignment.lock_info.unlock_at)}
+                         </p>
+                       )}
+                       {assignment.lock_info?.lock_at && (
+                         <p style={{ color: 'orange' }}>
+                           Locks: {formatDateWithRemaining(assignment.lock_info.lock_at)}
+                         </p>
+                       )}
                        <a href={assignment.html_url} target="_blank" rel="noopener noreferrer">
                          View Assignment →
                        </a>
@@ -243,9 +308,20 @@ export function Dashboard({ accessToken }: DashboardProps) {
                     <div key={assignment.id} style={{ border: '1px solid #red', padding: '10px', marginBottom: '10px', backgroundColor: '#ffe6e6' }}>
                                              <h4>{assignment.name} {assignment.locked_for_user && <span style={{ color: 'orange' }}>🔒</span>}</h4>
                        <p>Course: {course?.name}</p>
-                       <p>Was Due: {new Date(assignment.due_at!).toLocaleString()}</p>
+                       <p>Was Due: {formatDateWithRemaining(assignment.due_at!)}</p>
                        <p>Points: {assignment.points_possible || 'N/A'}</p>
+                       <p>Submission Types: {assignment.submission_types.join(', ')}</p>
                        {assignment.locked_for_user && <p style={{ color: 'orange' }}>This assignment is locked for you</p>}
+                       {assignment.lock_info?.unlock_at && (
+                         <p style={{ color: 'blue' }}>
+                           Unlocks: {formatDateWithRemaining(assignment.lock_info.unlock_at)}
+                         </p>
+                       )}
+                       {assignment.lock_info?.lock_at && (
+                         <p style={{ color: 'orange' }}>
+                           Locks: {formatDateWithRemaining(assignment.lock_info.lock_at)}
+                         </p>
+                       )}
                        <a href={assignment.html_url} target="_blank" rel="noopener noreferrer">
                          {assignment.locked_for_user ? 'View Assignment →' : 'Submit Assignment →'}
                        </a>
@@ -271,8 +347,8 @@ export function Dashboard({ accessToken }: DashboardProps) {
                 return (
                   <div key={announcement.id} style={{ border: '1px solid #ccc', padding: '15px', marginBottom: '15px' }}>
                     <h3>{announcement.title}</h3>
-                    <p><strong>Course:</strong> {course?.name}</p>
-                    <p><strong>Posted:</strong> {new Date(announcement.posted_at).toLocaleString()}</p>
+                                         <p><strong>Course:</strong> {course?.name}</p>
+                     <p><strong>Posted:</strong> {formatDateAgo(announcement.posted_at)}</p>
                     <a href={announcement.url} target="_blank" rel="noopener noreferrer">
                       Read Full Announcement →
                     </a>

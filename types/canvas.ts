@@ -6,6 +6,14 @@ export interface Course {
   uuid?: string;
 }
 
+export interface LockInfo {
+  asset_string?: string;
+  unlock_at?: string;
+  lock_at?: string;
+  context_module?: string;
+  manually_locked?: boolean;
+}
+
 export interface Assignment {
   id: number;
   name: string;
@@ -15,6 +23,9 @@ export interface Assignment {
   points_possible: number | null;
   assignment_group_id: number;
   locked_for_user: boolean;
+  lock_info: LockInfo | null;
+  can_submit: boolean;
+  submission_types: string[];
   submission?: Submission;
 }
 
@@ -28,6 +39,9 @@ export interface ProcessedAssignment {
   submission_status: string;
   assignment_group_id: number;
   locked_for_user: boolean;
+  lock_info: LockInfo | null;
+  can_submit: boolean;
+  submission_types: string[];
   grade?: number;
 }
 

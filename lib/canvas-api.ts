@@ -146,6 +146,9 @@ export class CanvasApiService {
       submission_status: 'Not Submitted',
       assignment_group_id: assignment.assignment_group_id,
       locked_for_user: assignment.locked_for_user,
+      lock_info: assignment.lock_info,
+      can_submit: assignment.can_submit,
+      submission_types: assignment.submission_types,
     };
 
     const submission = assignment.submission;
