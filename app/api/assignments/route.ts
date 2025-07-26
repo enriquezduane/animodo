@@ -34,7 +34,6 @@ export async function GET(request: Request) {
             name: assignment.name,
             due_at: assignment.due_at,
             html_url: assignment.html_url,
-            points_possible: assignment.points_possible,
             assignment_group_id: assignment.assignment_group_id,
             has_submitted_submissions: assignment.has_submitted_submissions || false,
             submission: assignment.submission ? {
