@@ -169,7 +169,7 @@ export default function DashboardClient() {
                 const dateB = new Date(b.due_at!).getTime();
                 return dateA - dateB;
             })
-            .slice(0, 5);
+            .slice(0, 15); // Get more assignments so Overview can filter ignored ones and still show 5
     };
 
     const getRecentAnnouncements = () => {

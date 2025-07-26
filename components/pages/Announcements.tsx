@@ -89,11 +89,11 @@ export default function Announcements({
         const timeDiff = now.getTime() - postedDate.getTime();
         
         const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-        if (days > 0) return `${days} days ago`;
+        if (days > 0) return `${days} ${days === 1 ? 'day' : 'days'} ago`;
         const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        if (hours > 0) return `${hours} hours ago`;
+        if (hours > 0) return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
         const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-        return `${minutes} minutes ago`;
+        return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
     };
 
     const formatAnnouncementDate = (postedDateString: string) => {
@@ -172,7 +172,7 @@ export default function Announcements({
                         onClick={onToggleOldAnnouncements}
                         className={`filter-btn ${showOldAnnouncements ? 'active' : ''}`}
                     >
-                        {showOldAnnouncements ? '✓ Showing old announcements' : 'Show old announcements'}
+                        {showOldAnnouncements ? '✓ Showing old' : 'Show old (>20 days)'}
                     </button>
                     
                     <div className="course-filter" ref={courseDropdownRef}>
