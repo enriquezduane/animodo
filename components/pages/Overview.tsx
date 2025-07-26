@@ -70,6 +70,14 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
             return 'Graded';
         }
         
+        if (workflow_state === 'submitted') {
+            return 'Submitted';
+        }
+        
+        if (workflow_state === 'pending_review') {
+            return 'Pending Review';
+        }
+        
         return workflow_state.charAt(0).toUpperCase() + workflow_state.slice(1).replace('_', ' ');
     };
 
@@ -85,16 +93,47 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
             const hoursLeft = timeDiff / (1000 * 60 * 60);
             
             if (timeDiff < 0) return '#dc3545'; // Red for overdue
-            if (hoursLeft < 24) return '#fd7e14'; // Orange for due soon
-            if (hoursLeft < 72) return '#ffc107'; // Yellow for due in 3 days
-            return '#28a745'; // Green for plenty of time
+            if (hoursLeft < 24) return '#fd7e14'; // Orange for almost due
+            return '#ffc107'; // Yellow for due soon (covers both due soon and plenty of time)
         }
         
-        if (status.includes('Submitted') || status.includes('Pending')) return '#17a2b8'; // Teal for submitted
-        if (status.includes('Graded')) return '#6f42c1'; // Purple for graded
+        if (status === 'Submitted') return '#28a745'; // Green for submitted
+        if (status === 'Pending Review') return '#17a2b8'; // Blue for pending review
+        if (status === 'Graded') return '#6f42c1'; // Purple for graded
         if (status === 'Group Submitted') return '#20c997'; // Teal-green for group
         
         return '#6c757d'; // Default gray
+    };
+
+    const getStatusLabel = (assignment: Assignment) => {
+        const status = getSubmissionStatus(assignment);
+        
+        if (status === 'Unsubmitted') {
+            if (!assignment.due_at) return 'Low Priority';
+            
+            const now = new Date();
+            const dueDate = new Date(assignment.due_at);
+            const timeDiff = dueDate.getTime() - now.getTime();
+            const hoursLeft = timeDiff / (1000 * 60 * 60);
+            
+            if (timeDiff < 0) return 'Overdue!';
+            if (hoursLeft < 24) return 'Almost Due';
+            return 'Due Soon';
+        }
+        
+        return status; // Use the actual status for submitted, graded, etc.
+    };
+
+    const getDaysUntilDue = (dueDateString: string | null) => {
+        if (!dueDateString) return null;
+        
+        const now = new Date();
+        const dueDate = new Date(dueDateString);
+        const timeDiff = dueDate.getTime() - now.getTime();
+        const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        
+        if (daysLeft < 0) return Math.abs(daysLeft);
+        return daysLeft;
     };
 
     return (
@@ -108,8 +147,9 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                         {urgentAssignments.map(assignment => {
                             const course = courses.find(c => c.id === assignment.courseId);
                             const courseCode = course ? getCourseCode(course.name) : '';
-                            const status = getSubmissionStatus(assignment);
+                            const statusLabel = getStatusLabel(assignment);
                             const statusColor = getStatusColor(assignment);
+                            const daysUntilDue = getDaysUntilDue(assignment.due_at);
                             
                             return (
                                 <div key={assignment.id} className="assignment-card">
@@ -117,12 +157,21 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                                         <a href={assignment.html_url} target="_blank" rel="noreferrer" className="assignment-title">
                                             [{courseCode}] {assignment.name}
                                         </a>
-                                        <span 
-                                            className="status-badge" 
-                                            style={{ backgroundColor: statusColor }}
-                                        >
-                                            {status}
-                                        </span>
+                                        <div className="status-container">
+                                            {daysUntilDue !== null && (
+                                                <span className="days-countdown">
+                                                    {daysUntilDue === 0 ? 'Today' : 
+                                                     daysUntilDue < 0 ? `${Math.abs(daysUntilDue)}d over` :
+                                                     `${daysUntilDue}d left`}
+                                                </span>
+                                            )}
+                                            <span 
+                                                className="status-badge" 
+                                                style={{ backgroundColor: statusColor }}
+                                            >
+                                                {statusLabel}
+                                            </span>
+                                        </div>
                                     </div>
                                     <div className="assignment-due">
                                         Due: {formatDate(assignment.due_at)} {assignment.due_at ? `(${getTimeRemaining(assignment.due_at)})` : ''}
@@ -209,6 +258,23 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                     align-items: flex-start;
                     gap: 12px;
                     margin-bottom: 8px;
+                }
+
+                .status-container {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    flex-shrink: 0;
+                }
+
+                .days-countdown {
+                    background: #f8f9fa;
+                    color: #495057;
+                    padding: 2px 6px;
+                    border-radius: 8px;
+                    font-size: 11px;
+                    font-weight: 600;
+                    white-space: nowrap;
                 }
 
                 .assignment-title, .announcement-title {

@@ -305,6 +305,7 @@ export default function DashboardClient() {
                 return (
                     <Assignments
                         coursesWithAssignments={coursesWithAssignments}
+                        courses={courses}
                         expandedCourses={expandedAssignmentCourses}
                         showOverdueAssignments={showOverdueAssignments}
                         showNoDueDates={showNoDueDates}
@@ -325,6 +326,7 @@ export default function DashboardClient() {
                 return (
                     <Announcements
                         coursesWithAnnouncements={coursesWithAnnouncements}
+                        courses={courses}
                         expandedCourses={expandedAnnouncementCourses}
                         showOldAnnouncements={showOldAnnouncements}
                         onToggleCourse={(courseId) => {

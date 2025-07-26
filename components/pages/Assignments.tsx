@@ -1,9 +1,11 @@
 'use client';
 
-import { Assignment, CourseWithAssignments } from '../types';
+import { useState, useEffect } from 'react';
+import { Assignment, CourseWithAssignments, Course } from '../types';
 
 interface AssignmentsProps {
     coursesWithAssignments: CourseWithAssignments[];
+    courses: Course[];
     expandedCourses: Set<number>;
     showOverdueAssignments: boolean;
     showNoDueDates: boolean;
@@ -12,8 +14,11 @@ interface AssignmentsProps {
     onToggleNoDueDates: () => void;
 }
 
+type StatusFilter = 'unsubmitted' | 'submitted' | 'graded' | 'pending_review' | 'group_submitted';
+
 export default function Assignments({ 
-    coursesWithAssignments, 
+    coursesWithAssignments,
+    courses,
     expandedCourses, 
     showOverdueAssignments, 
     showNoDueDates,
@@ -21,6 +26,54 @@ export default function Assignments({
     onToggleOverdue,
     onToggleNoDueDates
 }: AssignmentsProps) {
+    const [selectedStatuses, setSelectedStatuses] = useState<Set<StatusFilter>>(new Set(['unsubmitted']));
+    const [ignoredAssignments, setIgnoredAssignments] = useState<Set<number>>(new Set());
+    const [selectedCourses, setSelectedCourses] = useState<Set<number>>(new Set());
+    const [selectAllCourses, setSelectAllCourses] = useState(true);
+    const [showStatusDropdown, setShowStatusDropdown] = useState(false);
+    const [showCourseDropdown, setShowCourseDropdown] = useState(false);
+    const [showIgnored, setShowIgnored] = useState(false);
+
+    // Initialize with all courses selected
+    useEffect(() => {
+        if (selectAllCourses) {
+            setSelectedCourses(new Set(courses.map(c => c.id)));
+        }
+    }, [courses, selectAllCourses]);
+
+    // Load preferences from localStorage
+    useEffect(() => {
+        const savedStatuses = localStorage.getItem('assignment_status_filters');
+        const savedIgnored = localStorage.getItem('ignored_assignments');
+        const savedCourses = localStorage.getItem('selected_courses');
+        const savedSelectAll = localStorage.getItem('select_all_courses');
+        
+        if (savedStatuses) {
+            setSelectedStatuses(new Set(JSON.parse(savedStatuses)));
+        }
+        if (savedIgnored) {
+            setIgnoredAssignments(new Set(JSON.parse(savedIgnored)));
+        }
+        if (savedCourses && savedSelectAll === 'false') {
+            setSelectedCourses(new Set(JSON.parse(savedCourses)));
+            setSelectAllCourses(false);
+        }
+    }, []);
+
+    // Save preferences to localStorage
+    useEffect(() => {
+        localStorage.setItem('assignment_status_filters', JSON.stringify([...selectedStatuses]));
+    }, [selectedStatuses]);
+
+    useEffect(() => {
+        localStorage.setItem('ignored_assignments', JSON.stringify([...ignoredAssignments]));
+    }, [ignoredAssignments]);
+
+    useEffect(() => {
+        localStorage.setItem('selected_courses', JSON.stringify([...selectedCourses]));
+        localStorage.setItem('select_all_courses', selectAllCourses.toString());
+    }, [selectedCourses, selectAllCourses]);
+
     const getCourseCode = (courseName: string) => {
         const match = courseName.match(/^([A-Z]+\d+)/);
         return match ? match[1] : courseName.split(' ')[0];
@@ -56,130 +109,315 @@ export default function Assignments({
         return `${minutes} minutes left`;
     };
 
-    const getSubmissionStatus = (assignment: Assignment) => {
+    const getSubmissionStatus = (assignment: Assignment): StatusFilter => {
         if (assignment.has_submitted_submissions && !assignment.submission) {
-            return 'Group Submitted';
+            return 'group_submitted';
         }
         
-        if (!assignment.submission) return 'Unsubmitted';
+        if (!assignment.submission) return 'unsubmitted';
         
         const { workflow_state, score } = assignment.submission;
         
         if (workflow_state === 'graded' && score !== null) {
-            return 'Graded';
+            return 'graded';
         }
         
-        return workflow_state.charAt(0).toUpperCase() + workflow_state.slice(1).replace('_', ' ');
+        if (workflow_state === 'submitted' || workflow_state === 'pending_review') {
+            return workflow_state === 'submitted' ? 'submitted' : 'pending_review';
+        }
+        
+        return 'unsubmitted';
     };
 
     const getStatusColor = (assignment: Assignment) => {
         const status = getSubmissionStatus(assignment);
         
-        if (status === 'Unsubmitted') {
-            if (!assignment.due_at) return '#6c757d'; // Gray for no due date
+        if (status === 'unsubmitted') {
+            if (!assignment.due_at) return '#6c757d';
             
             const now = new Date();
             const dueDate = new Date(assignment.due_at);
             const timeDiff = dueDate.getTime() - now.getTime();
             const hoursLeft = timeDiff / (1000 * 60 * 60);
             
-            if (timeDiff < 0) return '#dc3545'; // Red for overdue
-            if (hoursLeft < 24) return '#fd7e14'; // Orange for due soon
-            if (hoursLeft < 72) return '#ffc107'; // Yellow for due in 3 days
-            return '#28a745'; // Green for plenty of time
+            if (timeDiff < 0) return '#dc3545';
+            if (hoursLeft < 24) return '#fd7e14';
+            return '#ffc107';
         }
         
-        if (status.includes('Submitted') || status.includes('Pending')) return '#17a2b8'; // Teal for submitted
-        if (status.includes('Graded')) return '#6f42c1'; // Purple for graded
-        if (status === 'Group Submitted') return '#20c997'; // Teal-green for group
+        if (status === 'submitted') return '#28a745';
+        if (status === 'pending_review') return '#17a2b8';
+        if (status === 'graded') return '#6f42c1';
+        if (status === 'group_submitted') return '#20c997';
         
-        return '#6c757d'; // Default gray
+        return '#6c757d';
     };
+
+    const getStatusLabel = (assignment: Assignment) => {
+        const status = getSubmissionStatus(assignment);
+        
+        if (status === 'unsubmitted') {
+            if (!assignment.due_at) return 'Low Priority';
+            
+            const now = new Date();
+            const dueDate = new Date(assignment.due_at);
+            const timeDiff = dueDate.getTime() - now.getTime();
+            const hoursLeft = timeDiff / (1000 * 60 * 60);
+            
+            if (timeDiff < 0) return 'Overdue!';
+            if (hoursLeft < 24) return 'Almost Due';
+            return 'Due Soon';
+        }
+        
+        const statusLabels = {
+            'submitted': 'Submitted',
+            'pending_review': 'Pending Review',
+            'graded': 'Graded',
+            'group_submitted': 'Group Submitted'
+        };
+        
+        return statusLabels[status] || status;
+    };
+
+    const getDaysUntilDue = (dueDateString: string | null) => {
+        if (!dueDateString) return null;
+        
+        const now = new Date();
+        const dueDate = new Date(dueDateString);
+        const timeDiff = dueDate.getTime() - now.getTime();
+        const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        
+        return daysLeft;
+    };
+
+    const toggleStatusFilter = (status: StatusFilter) => {
+        const newStatuses = new Set(selectedStatuses);
+        if (newStatuses.has(status)) {
+            newStatuses.delete(status);
+        } else {
+            newStatuses.add(status);
+        }
+        setSelectedStatuses(newStatuses);
+    };
+
+    const toggleCourseFilter = (courseId: number) => {
+        const newCourses = new Set(selectedCourses);
+        if (newCourses.has(courseId)) {
+            newCourses.delete(courseId);
+        } else {
+            newCourses.add(courseId);
+        }
+        setSelectedCourses(newCourses);
+        setSelectAllCourses(false);
+    };
+
+    const handleSelectAllCourses = () => {
+        if (selectAllCourses) {
+            // Already selected all, do nothing
+            return;
+        }
+        setSelectAllCourses(true);
+        setSelectedCourses(new Set(courses.map(c => c.id)));
+    };
+
+    const toggleIgnoreAssignment = (assignmentId: number) => {
+        const newIgnored = new Set(ignoredAssignments);
+        if (newIgnored.has(assignmentId)) {
+            newIgnored.delete(assignmentId);
+        } else {
+            newIgnored.add(assignmentId);
+        }
+        setIgnoredAssignments(newIgnored);
+    };
+
+    const statusOptions: { value: StatusFilter; label: string; color: string }[] = [
+        { value: 'unsubmitted', label: 'Unsubmitted', color: '#ffc107' },
+        { value: 'submitted', label: 'Submitted', color: '#28a745' },
+        { value: 'pending_review', label: 'Pending Review', color: '#17a2b8' },
+        { value: 'graded', label: 'Graded', color: '#6f42c1' },
+        { value: 'group_submitted', label: 'Group Submitted', color: '#20c997' }
+    ];
+
+    // Create flat list of all assignments with course info
+    const allAssignments: (Assignment & { courseId: number; courseName: string })[] = [];
+    
+    coursesWithAssignments.forEach(course => {
+        course.assignments.forEach(assignment => {
+            allAssignments.push({
+                ...assignment,
+                courseId: course.id,
+                courseName: course.name
+            });
+        });
+    });
+
+    // Filter and sort assignments
+    const filteredAssignments = allAssignments
+        .filter(assignment => {
+            // Apply status filter
+            const status = getSubmissionStatus(assignment);
+            if (!selectedStatuses.has(status)) return false;
+            
+            // Apply course filter
+            if (!selectedCourses.has(assignment.courseId)) return false;
+            
+            // Apply ignore filter
+            if (!showIgnored && ignoredAssignments.has(assignment.id)) return false;
+            
+            return true;
+        })
+        .sort((a, b) => {
+            // Sort by due date (earliest first)
+            if (!a.due_at && !b.due_at) return 0;
+            if (!a.due_at) return 1;
+            if (!b.due_at) return -1;
+            return new Date(a.due_at).getTime() - new Date(b.due_at).getTime();
+        });
 
     return (
         <div className="assignments">
             <h1>📝 All Assignments</h1>
             
             <div className="filters">
-                <button 
-                    onClick={onToggleOverdue}
-                    className={`filter-btn ${showOverdueAssignments ? 'active' : ''}`}
-                >
-                    {showOverdueAssignments ? '✓ Showing > 10 days overdue' : 'Show > 10 days overdue'}
-                </button>
-                <button 
-                    onClick={onToggleNoDueDates}
-                    className={`filter-btn ${showNoDueDates ? 'active' : ''}`}
-                >
-                    {showNoDueDates ? '✓ Showing no due dates' : 'Show no due dates'}
-                </button>
-            </div>
-
-            <div className="courses-list">
-                {coursesWithAssignments.map(course => (
-                    <div key={course.id} className="course-section">
+                <div className="filter-row">
+                    <div className="status-filter">
                         <button 
-                            onClick={() => onToggleCourse(course.id)} 
-                            className="course-header"
+                            onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+                            className="status-dropdown-btn"
                         >
-                            <span className="expand-icon">
-                                {expandedCourses.has(course.id) ? '▼' : '▶'}
-                            </span>
-                            <span className="course-title">
-                                [{getCourseCode(course.name)}] {course.name}
-                            </span>
-                            <span className="assignment-count">
-                                {course.assignments.length} assignment{course.assignments.length !== 1 ? 's' : ''}
-                            </span>
+                            Status ({selectedStatuses.size} selected) ▼
                         </button>
-                        
-                        {expandedCourses.has(course.id) && (
-                            <div className="assignments-container">
-                                {course.assignments.length > 0 ? (
-                                    <div className="assignment-list">
-                                        {course.assignments.map(assignment => {
-                                            const status = getSubmissionStatus(assignment);
-                                            const statusColor = getStatusColor(assignment);
-                                            
-                                            return (
-                                                <div key={assignment.id} className="assignment-card">
-                                                    <div className="assignment-header">
-                                                        <a 
-                                                            href={assignment.html_url} 
-                                                            target="_blank" 
-                                                            rel="noreferrer" 
-                                                            className="assignment-title"
-                                                        >
-                                                            {assignment.name}
-                                                        </a>
-                                                        <span 
-                                                            className="status-badge"
-                                                            style={{ backgroundColor: statusColor }}
-                                                        >
-                                                            {status}
-                                                        </span>
-                                                    </div>
-                                                    <div className="assignment-meta">
-                                                        <div className="due-date">
-                                                            Due: {formatDate(assignment.due_at)}
-                                                            {assignment.due_at && (
-                                                                <span className="time-remaining">
-                                                                    ({getTimeRemaining(assignment.due_at)})
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
-                                    </div>
-                                ) : (
-                                    <p className="empty-state">No assignments found</p>
-                                )}
+                        {showStatusDropdown && (
+                            <div className="status-dropdown">
+                                {statusOptions.map(option => (
+                                    <label key={option.value} className="status-option">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedStatuses.has(option.value)}
+                                            onChange={() => toggleStatusFilter(option.value)}
+                                        />
+                                        <span 
+                                            className="status-color-dot" 
+                                            style={{ backgroundColor: option.color }}
+                                        ></span>
+                                        {option.label}
+                                    </label>
+                                ))}
                             </div>
                         )}
                     </div>
-                ))}
+
+                    <div className="course-filter">
+                        <button 
+                            onClick={() => setShowCourseDropdown(!showCourseDropdown)}
+                            className="course-dropdown-btn"
+                        >
+                            Courses ({selectedCourses.size} selected) ▼
+                        </button>
+                        {showCourseDropdown && (
+                            <div className="course-dropdown">
+                                <label className="select-all-course-label">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectAllCourses}
+                                        onChange={handleSelectAllCourses}
+                                    />
+                                    Select All
+                                </label>
+                                {courses.map(course => (
+                                    <label key={course.id} className="course-option">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedCourses.has(course.id)}
+                                            onChange={() => toggleCourseFilter(course.id)}
+                                        />
+                                        {course.name}
+                                    </label>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="filter-row">
+                    <button 
+                        onClick={onToggleOverdue}
+                        className={`filter-btn ${showOverdueAssignments ? 'active' : ''}`}
+                    >
+                        {showOverdueAssignments ? '✓ Showing > 10 days overdue' : 'Show > 10 days overdue'}
+                    </button>
+                    <button 
+                        onClick={onToggleNoDueDates}
+                        className={`filter-btn ${showNoDueDates ? 'active' : ''}`}
+                    >
+                        {showNoDueDates ? '✓ Showing no due dates' : 'Show no due dates'}
+                    </button>
+                    <button 
+                        onClick={() => setShowIgnored(!showIgnored)}
+                        className={`filter-btn ${showIgnored ? 'active' : ''}`}
+                    >
+                        {showIgnored ? '✓ Showing ignored' : 'Show ignored'}
+                    </button>
+                </div>
+            </div>
+
+            <div className="assignments-list">
+                {filteredAssignments.length > 0 ? (
+                    filteredAssignments.map(assignment => {
+                        const statusLabel = getStatusLabel(assignment);
+                        const statusColor = getStatusColor(assignment);
+                        const daysLeft = getDaysUntilDue(assignment.due_at);
+                        
+                        return (
+                            <div key={assignment.id} className="assignment-card">
+                                <div className="assignment-header">
+                                    <a 
+                                        href={assignment.html_url} 
+                                        target="_blank" 
+                                        rel="noreferrer" 
+                                        className="assignment-title"
+                                    >
+                                        {assignment.name}
+                                    </a>
+                                    <div className="status-container">
+                                        {daysLeft !== null && (
+                                            <span className="days-countdown">
+                                                {daysLeft === 0 ? 'Today' : 
+                                                 daysLeft < 0 ? `${Math.abs(daysLeft)}d over` :
+                                                 `${daysLeft}d left`}
+                                            </span>
+                                        )}
+                                        <span 
+                                            className="status-badge"
+                                            style={{ backgroundColor: statusColor }}
+                                        >
+                                            {statusLabel}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="assignment-meta">
+                                    <div className="due-date">
+                                        [{getCourseCode(assignment.courseName)}] Due: {formatDate(assignment.due_at)}
+                                        {assignment.due_at && (
+                                            <span className="time-remaining">
+                                                ({getTimeRemaining(assignment.due_at)})
+                                            </span>
+                                        )}
+                                    </div>
+                                    <button
+                                        onClick={() => toggleIgnoreAssignment(assignment.id)}
+                                        className={`ignore-btn ${ignoredAssignments.has(assignment.id) ? 'ignored' : ''}`}
+                                        title={ignoredAssignments.has(assignment.id) ? 'Unignore assignment' : 'Ignore assignment'}
+                                    >
+                                        {ignoredAssignments.has(assignment.id) ? '👁️ Unignore' : '🙈 Ignore'}
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div className="empty-state">No assignments found matching your filters</div>
+                )}
             </div>
 
             <style jsx>{`
@@ -195,8 +433,15 @@ export default function Assignments({
 
                 .filters {
                     display: flex;
+                    flex-direction: column;
                     gap: 12px;
                     margin-bottom: 30px;
+                    flex-wrap: wrap;
+                }
+
+                .filter-row {
+                    display: flex;
+                    gap: 12px;
                     flex-wrap: wrap;
                 }
 
@@ -222,59 +467,145 @@ export default function Assignments({
                     color: white;
                 }
 
-                .courses-list {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 16px;
-                }
-
-                .course-section {
-                    background: white;
-                    border: 1px solid #e9ecef;
-                    border-radius: 8px;
-                    overflow: hidden;
-                }
-
-                .course-header {
-                    width: 100%;
-                    padding: 16px 20px;
-                    border: none;
-                    background: #f8f9fa;
-                    text-align: left;
-                    cursor: pointer;
+                .status-filter {
+                    position: relative;
                     display: flex;
                     align-items: center;
-                    gap: 12px;
-                    font-size: 16px;
-                    font-weight: 500;
+                    gap: 8px;
+                }
+
+                .status-dropdown-btn {
+                    padding: 8px 16px;
+                    border: 2px solid #dee2e6;
+                    background: white;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-size: 14px;
                     color: #495057;
+                    transition: all 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                .status-dropdown-btn:hover {
+                    border-color: #007bff;
+                    color: #007bff;
+                }
+
+                .status-dropdown {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    background: white;
+                    border: 1px solid #e9ecef;
+                    border-radius: 6px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    z-index: 1000;
+                    width: 200px;
+                    padding: 8px 0;
+                }
+
+                .status-option {
+                    display: flex;
+                    align-items: center;
+                    padding: 8px 12px;
+                    cursor: pointer;
                     transition: background-color 0.2s ease;
                 }
 
-                .course-header:hover {
-                    background: #e9ecef;
+                .status-option:hover {
+                    background-color: #f8f9fa;
                 }
 
-                .expand-icon {
+                .status-option input {
+                    margin-right: 10px;
+                    transform: scale(0.8);
+                }
+
+                .status-color-dot {
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    margin-right: 10px;
+                }
+
+                .course-filter {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                .course-dropdown-btn {
+                    padding: 8px 16px;
+                    border: 2px solid #dee2e6;
+                    background: white;
+                    border-radius: 6px;
+                    cursor: pointer;
                     font-size: 14px;
-                    width: 16px;
+                    color: #495057;
+                    transition: all 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
                 }
 
-                .course-title {
-                    flex: 1;
+                .course-dropdown-btn:hover {
+                    border-color: #007bff;
+                    color: #007bff;
                 }
 
-                .assignment-count {
-                    font-size: 14px;
-                    font-weight: normal;
-                    color: #6c757d;
+                .course-dropdown {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    background: white;
+                    border: 1px solid #e9ecef;
+                    border-radius: 6px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    z-index: 1000;
+                    width: 250px; /* Adjust width as needed */
+                    padding: 8px 0;
                 }
 
-                .assignments-container {
-                    padding: 0;
+                .course-option {
+                    display: flex;
+                    align-items: center;
+                    padding: 8px 12px;
+                    cursor: pointer;
+                    transition: background-color 0.2s ease;
                 }
 
-                .assignment-list {
+                .course-option:hover {
+                    background-color: #f8f9fa;
+                }
+
+                .course-option input {
+                    margin-right: 10px;
+                    transform: scale(0.8);
+                }
+
+                .select-all-course-label {
+                    display: flex;
+                    align-items: center;
+                    padding: 8px 12px;
+                    cursor: pointer;
+                    transition: background-color 0.2s ease;
+                    font-weight: bold;
+                    color: #495057;
+                }
+
+                .select-all-course-label:hover {
+                    background-color: #f8f9fa;
+                }
+
+                .select-all-course-label input {
+                    margin-right: 10px;
+                    transform: scale(0.8);
+                }
+
+                .assignments-list {
                     display: flex;
                     flex-direction: column;
                 }
@@ -309,6 +640,25 @@ export default function Assignments({
                     text-decoration: underline;
                 }
 
+                .status-container {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                }
+
+                .course-name {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #495057;
+                    flex-shrink: 0;
+                }
+
+                .days-countdown {
+                    font-weight: 500;
+                    color: #6c757d;
+                    font-size: 14px;
+                }
+
                 .status-badge {
                     color: white;
                     padding: 4px 8px;
@@ -321,6 +671,9 @@ export default function Assignments({
                 .assignment-meta {
                     color: #6c757d;
                     font-size: 14px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
                 }
 
                 .due-date {
@@ -331,6 +684,43 @@ export default function Assignments({
 
                 .time-remaining {
                     font-weight: 500;
+                }
+
+                .days-left {
+                    font-size: 12px;
+                    font-weight: 500;
+                    color: #6c757d;
+                }
+
+                .ignore-btn {
+                    padding: 4px 8px;
+                    border: 1px solid #dee2e6;
+                    background: white;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    font-size: 12px;
+                    color: #495057;
+                    transition: all 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                }
+
+                .ignore-btn:hover {
+                    border-color: #007bff;
+                    color: #007bff;
+                }
+
+                .ignore-btn.ignored {
+                    border-color: #dc3545;
+                    color: #dc3545;
+                    background: #f8d7da;
+                }
+
+                .ignore-btn.ignored:hover {
+                    border-color: #c82333;
+                    color: #c82333;
+                    background: #f5c6cb;
                 }
 
                 .empty-state {

@@ -1,9 +1,11 @@
 'use client';
 
-import { CourseWithAnnouncements } from '../types';
+import { useState, useEffect } from 'react';
+import { CourseWithAnnouncements, Course } from '../types';
 
 interface AnnouncementsProps {
     coursesWithAnnouncements: CourseWithAnnouncements[];
+    courses: Course[];
     expandedCourses: Set<number>;
     showOldAnnouncements: boolean;
     onToggleCourse: (courseId: number) => void;
@@ -11,12 +13,41 @@ interface AnnouncementsProps {
 }
 
 export default function Announcements({ 
-    coursesWithAnnouncements, 
+    coursesWithAnnouncements,
+    courses,
     expandedCourses, 
     showOldAnnouncements,
     onToggleCourse, 
     onToggleOldAnnouncements
 }: AnnouncementsProps) {
+    const [selectedCourses, setSelectedCourses] = useState<Set<number>>(new Set());
+    const [selectAllCourses, setSelectAllCourses] = useState(true);
+    const [showCourseDropdown, setShowCourseDropdown] = useState(false);
+
+    // Initialize with all courses selected
+    useEffect(() => {
+        if (selectAllCourses) {
+            setSelectedCourses(new Set(courses.map(c => c.id)));
+        }
+    }, [courses, selectAllCourses]);
+
+    // Load preferences from localStorage
+    useEffect(() => {
+        const savedCourses = localStorage.getItem('announcement_selected_courses');
+        const savedSelectAll = localStorage.getItem('announcement_select_all_courses');
+        
+        if (savedCourses && savedSelectAll === 'false') {
+            setSelectedCourses(new Set(JSON.parse(savedCourses)));
+            setSelectAllCourses(false);
+        }
+    }, []);
+
+    // Save preferences to localStorage
+    useEffect(() => {
+        localStorage.setItem('announcement_selected_courses', JSON.stringify([...selectedCourses]));
+        localStorage.setItem('announcement_select_all_courses', selectAllCourses.toString());
+    }, [selectedCourses, selectAllCourses]);
+
     const getCourseCode = (courseName: string) => {
         const match = courseName.match(/^([A-Z]+\d+)/);
         return match ? match[1] : courseName.split(' ')[0];
@@ -55,68 +86,121 @@ export default function Announcements({
         return `${formattedDate} (${timeAgo})`;
     };
 
+    const toggleCourseFilter = (courseId: number) => {
+        const newCourses = new Set(selectedCourses);
+        if (newCourses.has(courseId)) {
+            newCourses.delete(courseId);
+        } else {
+            newCourses.add(courseId);
+        }
+        setSelectedCourses(newCourses);
+        setSelectAllCourses(false);
+    };
+
+    const handleSelectAllCourses = () => {
+        if (selectAllCourses) {
+            return;
+        }
+        setSelectAllCourses(true);
+        setSelectedCourses(new Set(courses.map(c => c.id)));
+    };
+
+    // Create flat list of all announcements with course info
+    const allAnnouncements: (typeof coursesWithAnnouncements[0]['announcements'][0] & { courseId: number; courseName: string })[] = [];
+    
+    coursesWithAnnouncements.forEach(course => {
+        course.announcements.forEach(announcement => {
+            allAnnouncements.push({
+                ...announcement,
+                courseId: course.id,
+                courseName: course.name
+            });
+        });
+    });
+
+    // Filter and sort announcements
+    const filteredAnnouncements = allAnnouncements
+        .filter(announcement => {
+            // Apply course filter
+            if (!selectedCourses.has(announcement.courseId)) return false;
+            
+            return true;
+        })
+        .sort((a, b) => {
+            // Sort by recent (newest first)
+            return new Date(b.posted_at).getTime() - new Date(a.posted_at).getTime();
+        });
+
     return (
         <div className="announcements">
             <h1>📢 All Announcements</h1>
             
             <div className="filters">
-                <button 
-                    onClick={onToggleOldAnnouncements}
-                    className={`filter-btn ${showOldAnnouncements ? 'active' : ''}`}
-                >
-                    {showOldAnnouncements ? '✓ Showing old announcements' : 'Show old announcements'}
-                </button>
-            </div>
-
-            <div className="courses-list">
-                {coursesWithAnnouncements.map(course => (
-                    <div key={course.id} className="course-section">
+                <div className="filter-row">
+                    <button 
+                        onClick={onToggleOldAnnouncements}
+                        className={`filter-btn ${showOldAnnouncements ? 'active' : ''}`}
+                    >
+                        {showOldAnnouncements ? '✓ Showing old announcements' : 'Show old announcements'}
+                    </button>
+                    
+                    <div className="course-filter">
                         <button 
-                            onClick={() => onToggleCourse(course.id)} 
-                            className="course-header"
+                            onClick={() => setShowCourseDropdown(!showCourseDropdown)}
+                            className="course-dropdown-btn"
                         >
-                            <span className="expand-icon">
-                                {expandedCourses.has(course.id) ? '▼' : '▶'}
-                            </span>
-                            <span className="course-title">
-                                [{getCourseCode(course.name)}] {course.name}
-                            </span>
-                            <span className="announcement-count">
-                                {course.announcements.length} announcement{course.announcements.length !== 1 ? 's' : ''}
-                            </span>
+                            Courses ({selectedCourses.size} selected) ▼
                         </button>
-                        
-                        {expandedCourses.has(course.id) && (
-                            <div className="announcements-container">
-                                {course.announcements.length > 0 ? (
-                                    <div className="announcement-list">
-                                        {course.announcements.map(announcement => (
-                                            <div key={announcement.id} className="announcement-card">
-                                                <div className="announcement-header">
-                                                    <a 
-                                                        href={announcement.url} 
-                                                        target="_blank" 
-                                                        rel="noreferrer" 
-                                                        className="announcement-title"
-                                                    >
-                                                        {announcement.title}
-                                                    </a>
-                                                </div>
-                                                <div className="announcement-meta">
-                                                    <div className="posted-date">
-                                                        Posted: {formatAnnouncementDate(announcement.posted_at)}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <p className="empty-state">No announcements found</p>
-                                )}
+                        {showCourseDropdown && (
+                            <div className="course-dropdown">
+                                <label className="select-all-course-label">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectAllCourses}
+                                        onChange={handleSelectAllCourses}
+                                    />
+                                    Select All
+                                </label>
+                                {courses.map(course => (
+                                    <label key={course.id} className="course-option">
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedCourses.has(course.id)}
+                                            onChange={() => toggleCourseFilter(course.id)}
+                                        />
+                                        {course.name}
+                                    </label>
+                                ))}
                             </div>
                         )}
                     </div>
-                ))}
+                </div>
+            </div>
+
+            <div className="announcements-list">
+                {filteredAnnouncements.length > 0 ? (
+                    filteredAnnouncements.map(announcement => (
+                        <div key={announcement.id} className="announcement-card">
+                            <div className="announcement-header">
+                                <a 
+                                    href={announcement.url} 
+                                    target="_blank" 
+                                    rel="noreferrer" 
+                                    className="announcement-title"
+                                >
+                                    {announcement.title}
+                                </a>
+                            </div>
+                            <div className="announcement-meta">
+                                <div className="posted-date">
+                                    [{getCourseCode(announcement.courseName)}] Posted: {formatAnnouncementDate(announcement.posted_at)}
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="empty-state">No announcements found matching your filters</div>
+                )}
             </div>
 
             <style jsx>{`
@@ -135,6 +219,12 @@ export default function Announcements({
                     gap: 12px;
                     margin-bottom: 30px;
                     flex-wrap: wrap;
+                }
+
+                .filter-row {
+                    display: flex;
+                    gap: 12px;
+                    align-items: center;
                 }
 
                 .filter-btn {
@@ -159,61 +249,84 @@ export default function Announcements({
                     color: white;
                 }
 
-                .courses-list {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 16px;
+                .course-filter {
+                    position: relative;
                 }
 
-                .course-section {
+                .course-dropdown-btn {
+                    padding: 8px 16px;
+                    border: 2px solid #dee2e6;
                     background: white;
-                    border: 1px solid #e9ecef;
-                    border-radius: 8px;
-                    overflow: hidden;
-                }
-
-                .course-header {
-                    width: 100%;
-                    padding: 16px 20px;
-                    border: none;
-                    background: #f8f9fa;
-                    text-align: left;
+                    border-radius: 6px;
                     cursor: pointer;
+                    font-size: 14px;
+                    color: #495057;
+                    transition: all 0.2s ease;
                     display: flex;
                     align-items: center;
-                    gap: 12px;
-                    font-size: 16px;
-                    font-weight: 500;
-                    color: #495057;
+                    gap: 8px;
+                }
+
+                .course-dropdown-btn:hover {
+                    border-color: #007bff;
+                    color: #007bff;
+                }
+
+                .course-dropdown {
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                    background: white;
+                    border: 1px solid #e9ecef;
+                    border-radius: 6px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    z-index: 1000;
+                    width: 250px;
+                    padding: 8px 0;
+                    max-height: 300px;
+                    overflow-y: auto;
+                }
+
+                .course-option {
+                    display: flex;
+                    align-items: center;
+                    padding: 8px 12px;
+                    cursor: pointer;
                     transition: background-color 0.2s ease;
                 }
 
-                .course-header:hover {
-                    background: #e9ecef;
+                .course-option:hover {
+                    background-color: #f8f9fa;
                 }
 
-                .expand-icon {
-                    font-size: 14px;
-                    width: 16px;
+                .course-option input {
+                    margin-right: 10px;
+                    transform: scale(0.8);
                 }
 
-                .course-title {
-                    flex: 1;
+                .select-all-course-label {
+                    display: flex;
+                    align-items: center;
+                    padding: 8px 12px;
+                    cursor: pointer;
+                    transition: background-color 0.2s ease;
+                    font-weight: bold;
+                    color: #495057;
                 }
 
-                .announcement-count {
-                    font-size: 14px;
-                    font-weight: normal;
-                    color: #6c757d;
+                .select-all-course-label:hover {
+                    background-color: #f8f9fa;
                 }
 
-                .announcements-container {
-                    padding: 0;
+                .select-all-course-label input {
+                    margin-right: 10px;
+                    transform: scale(0.8);
                 }
 
-                .announcement-list {
+                .announcements-list {
                     display: flex;
                     flex-direction: column;
+                    gap: 12px;
                 }
 
                 .announcement-card {
