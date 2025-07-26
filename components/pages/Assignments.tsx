@@ -90,23 +90,16 @@ export default function Assignments({
         const now = new Date();
         const dueDate = new Date(dueDateString);
         const timeDiff = dueDate.getTime() - now.getTime();
+        const absoluteDiff = Math.abs(timeDiff);
         
-        if (timeDiff < 0) {
-            const pastDiff = Math.abs(timeDiff);
-            const pastDays = Math.floor(pastDiff / (1000 * 60 * 60 * 24));
-            if (pastDays > 0) return `${pastDays} days overdue`;
-            const pastHours = Math.floor((pastDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            if (pastHours > 0) return `${pastHours} hours overdue`;
-            const pastMinutes = Math.floor((pastDiff % (1000 * 60 * 60)) / (1000 * 60));
-            return `${pastMinutes} minutes overdue`;
-        }
+        const days = Math.floor(absoluteDiff / (1000 * 60 * 60 * 24));
+        if (days > 0) return `${days}d`;
         
-        const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-        if (days > 0) return `${days} days left`;
-        const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        if (hours > 0) return `${hours} hours left`;
-        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-        return `${minutes} minutes left`;
+        const hours = Math.floor((absoluteDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        if (hours > 0) return `${hours}h`;
+        
+        const minutes = Math.floor((absoluteDiff % (1000 * 60 * 60)) / (1000 * 60));
+        return `${minutes}m`;
     };
 
     const getSubmissionStatus = (assignment: Assignment): StatusFilter => {
@@ -179,16 +172,7 @@ export default function Assignments({
         return statusLabels[status] || status;
     };
 
-    const getDaysUntilDue = (dueDateString: string | null) => {
-        if (!dueDateString) return null;
-        
-        const now = new Date();
-        const dueDate = new Date(dueDateString);
-        const timeDiff = dueDate.getTime() - now.getTime();
-        const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-        
-        return daysLeft;
-    };
+
 
     const toggleStatusFilter = (status: StatusFilter) => {
         const newStatuses = new Set(selectedStatuses);
@@ -254,6 +238,29 @@ export default function Assignments({
     // Filter and sort assignments
     const filteredAssignments = allAssignments
         .filter(assignment => {
+            // Check for exclusive filters first
+            const now = new Date();
+            const maxDaysOverdue = 10;
+            
+            // If "Show ignored" is active, show ONLY ignored assignments
+            if (showIgnored) {
+                return ignoredAssignments.has(assignment.id);
+            }
+            
+            // If "Show no due dates" is active, show ONLY assignments with no due dates
+            if (showNoDueDates) {
+                return !assignment.due_at;
+            }
+            
+            // If "Show > 10 days overdue" is active, show ONLY assignments > 10 days overdue
+            if (showOverdueAssignments) {
+                if (!assignment.due_at) return false;
+                const dueDate = new Date(assignment.due_at);
+                const daysFromNow = (dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+                return daysFromNow < -maxDaysOverdue;
+            }
+            
+            // Normal filtering when no exclusive filters are active
             // Apply status filter
             const status = getSubmissionStatus(assignment);
             if (!selectedStatuses.has(status)) return false;
@@ -261,8 +268,18 @@ export default function Assignments({
             // Apply course filter
             if (!selectedCourses.has(assignment.courseId)) return false;
             
-            // Apply ignore filter
-            if (!showIgnored && ignoredAssignments.has(assignment.id)) return false;
+            // Exclude ignored assignments (unless showing ignored)
+            if (ignoredAssignments.has(assignment.id)) return false;
+            
+            // Exclude assignments with no due dates (unless showing them)
+            if (!assignment.due_at) return false;
+            
+            // Exclude assignments > 10 days overdue (unless showing them)
+            if (assignment.due_at) {
+                const dueDate = new Date(assignment.due_at);
+                const daysFromNow = (dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
+                if (daysFromNow < -maxDaysOverdue) return false;
+            }
             
             return true;
         })
@@ -344,19 +361,19 @@ export default function Assignments({
                         onClick={onToggleOverdue}
                         className={`filter-btn ${showOverdueAssignments ? 'active' : ''}`}
                     >
-                        {showOverdueAssignments ? '✓ Showing > 10 days overdue' : 'Show > 10 days overdue'}
+                        {showOverdueAssignments ? '✓ Only > 10 days overdue' : 'Only > 10 days overdue'}
                     </button>
                     <button 
                         onClick={onToggleNoDueDates}
                         className={`filter-btn ${showNoDueDates ? 'active' : ''}`}
                     >
-                        {showNoDueDates ? '✓ Showing no due dates' : 'Show no due dates'}
+                        {showNoDueDates ? '✓ Only no due dates' : 'Only no due dates'}
                     </button>
                     <button 
                         onClick={() => setShowIgnored(!showIgnored)}
                         className={`filter-btn ${showIgnored ? 'active' : ''}`}
                     >
-                        {showIgnored ? '✓ Showing ignored' : 'Show ignored'}
+                        {showIgnored ? '✓ Only ignored' : 'Only ignored'}
                     </button>
                 </div>
             </div>
@@ -366,7 +383,6 @@ export default function Assignments({
                     filteredAssignments.map(assignment => {
                         const statusLabel = getStatusLabel(assignment);
                         const statusColor = getStatusColor(assignment);
-                        const daysLeft = getDaysUntilDue(assignment.due_at);
                         
                         return (
                             <div key={assignment.id} className="assignment-card">
@@ -380,11 +396,9 @@ export default function Assignments({
                                         {assignment.name}
                                     </a>
                                     <div className="status-container">
-                                        {daysLeft !== null && (
+                                        {assignment.due_at && (
                                             <span className="days-countdown">
-                                                {daysLeft === 0 ? 'Today' : 
-                                                 daysLeft < 0 ? `${Math.abs(daysLeft)}d over` :
-                                                 `${daysLeft}d left`}
+                                                {getTimeRemaining(assignment.due_at)}
                                             </span>
                                         )}
                                         <span 
@@ -398,11 +412,6 @@ export default function Assignments({
                                 <div className="assignment-meta">
                                     <div className="due-date">
                                         [{getCourseCode(assignment.courseName)}] Due: {formatDate(assignment.due_at)}
-                                        {assignment.due_at && (
-                                            <span className="time-remaining">
-                                                ({getTimeRemaining(assignment.due_at)})
-                                            </span>
-                                        )}
                                     </div>
                                     <button
                                         onClick={() => toggleIgnoreAssignment(assignment.id)}
@@ -682,9 +691,7 @@ export default function Assignments({
                     gap: 8px;
                 }
 
-                .time-remaining {
-                    font-weight: 500;
-                }
+
 
                 .days-left {
                     font-size: 12px;

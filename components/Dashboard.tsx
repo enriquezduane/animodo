@@ -199,36 +199,18 @@ export default function DashboardClient() {
     };
 
     const getCoursesWithAssignments = (): CourseWithAssignments[] => {
-        const now = new Date();
-        const maxDaysOverdue = 10;
-        
         return courses.map(course => ({
             ...course,
-            assignments: assignments[course.id] || []
-        })).map(course => ({
-            ...course,
-            assignments: course.assignments
-                .filter(assignment => {
-                    if (!showOverdueAssignments && assignment.due_at) {
-                        const dueDate = new Date(assignment.due_at);
-                        const daysFromNow = (dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
-                        if (daysFromNow < -maxDaysOverdue) return false;
-                    }
-                    
-                    if (!showNoDueDates && !assignment.due_at) return false;
-                    
-                    return true;
-                })
-                .sort((a, b) => {
-                    if (!a.due_at && !b.due_at) return 0;
-                    if (!a.due_at) return 1;
-                    if (!b.due_at) return -1;
-                    
-                    const dateComparison = new Date(a.due_at).getTime() - new Date(b.due_at).getTime();
-                    if (dateComparison !== 0) return dateComparison;
-                    
-                    return getStatusPriority(a) - getStatusPriority(b);
-                })
+            assignments: (assignments[course.id] || []).sort((a, b) => {
+                if (!a.due_at && !b.due_at) return 0;
+                if (!a.due_at) return 1;
+                if (!b.due_at) return -1;
+                
+                const dateComparison = new Date(a.due_at).getTime() - new Date(b.due_at).getTime();
+                if (dateComparison !== 0) return dateComparison;
+                
+                return getStatusPriority(a) - getStatusPriority(b);
+            })
         }));
     };
 
