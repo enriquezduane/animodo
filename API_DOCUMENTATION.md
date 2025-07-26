@@ -1,49 +1,77 @@
 # Canvas API Documentation
 
-This documentation covers the Canvas LMS API endpoints available in your NextJS application.
-
 ## Overview
 
-The API provides endpoints to fetch Canvas LMS data including courses, assignments, and announcements. All endpoints support both GET and POST methods and require an access token for authentication.
+The Canvas API provides endpoints to interact with Canvas LMS data, including courses, assignments, and announcements. All endpoints support both GET and POST methods for flexibility.
 
-## Base URL Structure
+## Base URL
 
-All endpoints follow the pattern: `/api/canvas/{resource}`
+```
+/api/canvas
+```
 
 ## Authentication
 
-All endpoints require:
-- `accessToken`: Your Canvas API access token
-- `canvasUrl`: Your Canvas instance URL (e.g., "https://dlsu.instructure.com")
+All endpoints require Canvas LMS credentials:
+- `accessToken`: Canvas API access token
+- `canvasUrl`: Your Canvas instance URL (e.g., `https://canvas.instructure.com`)
+
+⚠️ **Security Note**: Use POST requests when possible to avoid exposing tokens in URL parameters.
+
+## Response Format
+
+All API responses follow a consistent structure:
+
+```typescript
+interface CanvasApiResponse<T> {
+  data: T | null;
+  success: boolean;
+  error?: string;
+}
+```
+
+### Success Response
+```json
+{
+  "data": { /* response data */ },
+  "success": true
+}
+```
+
+### Error Response
+```json
+{
+  "data": null,
+  "success": false,
+  "error": "Error message describing what went wrong"
+}
+```
 
 ## Endpoints
 
 ### 1. Get Favorite Courses
-Fetches the user's favorite courses from Canvas.
 
-**Endpoint:** `/api/canvas/courses`
+Retrieves the user's favorite courses from Canvas.
 
-**Methods:** GET, POST
+#### `GET /api/canvas/courses`
 
-**Parameters:**
+**Query Parameters:**
 - `accessToken` (required): Canvas API access token
 - `canvasUrl` (required): Canvas instance URL
 
-**Example Usage:**
+**Example:**
+```
+GET /api/canvas/courses?accessToken=your_token&canvasUrl=https://canvas.instructure.com
+```
 
-```javascript
-// GET request
-const response = await fetch('/api/canvas/courses?accessToken=YOUR_TOKEN&canvasUrl=https://dlsu.instructure.com');
+#### `POST /api/canvas/courses`
 
-// POST request
-const response = await fetch('/api/canvas/courses', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    accessToken: 'YOUR_TOKEN',
-    canvasUrl: 'https://dlsu.instructure.com'
-  })
-});
+**Request Body:**
+```json
+{
+  "accessToken": "your_canvas_token",
+  "canvasUrl": "https://canvas.instructure.com"
+}
 ```
 
 **Response:**
@@ -52,42 +80,42 @@ const response = await fetch('/api/canvas/courses', {
   "data": [
     {
       "id": 12345,
-      "name": "Computer Science 101",
-      "course_code": "CS101"
+      "name": "Introduction to Computer Science",
+      "course_code": "CS101",
+      "uuid": "course-uuid"
     }
   ],
   "success": true
 }
 ```
 
-### 2. Get Assignments
-Fetches assignments for a specific course.
+---
 
-**Endpoint:** `/api/canvas/assignments`
+### 2. Get Course Assignments
 
-**Methods:** GET, POST
+Retrieves assignments for a specific course.
 
-**Parameters:**
+#### `GET /api/canvas/assignments`
+
+**Query Parameters:**
 - `accessToken` (required): Canvas API access token
 - `canvasUrl` (required): Canvas instance URL
-- `courseId` (required): Course ID number
+- `courseId` (required): Course ID (number)
 
-**Example Usage:**
+**Example:**
+```
+GET /api/canvas/assignments?accessToken=your_token&canvasUrl=https://canvas.instructure.com&courseId=12345
+```
 
-```javascript
-// GET request
-const response = await fetch('/api/canvas/assignments?accessToken=YOUR_TOKEN&canvasUrl=https://dlsu.instructure.com&courseId=12345');
+#### `POST /api/canvas/assignments`
 
-// POST request
-const response = await fetch('/api/canvas/assignments', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    accessToken: 'YOUR_TOKEN',
-    canvasUrl: 'https://dlsu.instructure.com',
-    courseId: 12345
-  })
-});
+**Request Body:**
+```json
+{
+  "accessToken": "your_canvas_token",
+  "canvasUrl": "https://canvas.instructure.com",
+  "courseId": 12345
+}
 ```
 
 **Response:**
@@ -96,49 +124,51 @@ const response = await fetch('/api/canvas/assignments', {
   "data": [
     {
       "id": 67890,
-      "name": "Final Project",
+      "name": "Homework Assignment 1",
       "course_id": 12345,
       "due_at": "2024-01-15T23:59:00Z",
-      "html_url": "https://canvas.url/assignments/67890",
+      "html_url": "https://canvas.instructure.com/courses/12345/assignments/67890",
       "points_possible": 100,
       "submission_status": "Not Submitted",
-      "assignment_group_id": 1001,
-      "grade": 85
+      "assignment_group_id": 1234,
+      "locked_for_user": false,
+      "lock_info": null,
+      "can_submit": true,
+      "submission_types": ["online_text_entry", "online_upload"],
+      "grade": null
     }
   ],
   "success": true
 }
 ```
 
-### 3. Get Announcements
-Fetches announcements for multiple courses.
+---
 
-**Endpoint:** `/api/canvas/announcements`
+### 3. Get Course Announcements
 
-**Methods:** GET, POST
+Retrieves announcements for multiple courses.
 
-**Parameters:**
+#### `GET /api/canvas/announcements`
+
+**Query Parameters:**
 - `accessToken` (required): Canvas API access token
 - `canvasUrl` (required): Canvas instance URL
-- `courseIds` (required): Array of course ID numbers (for GET: JSON stringified array)
+- `courseIds` (required): JSON array of course IDs
 
-**Example Usage:**
+**Example:**
+```
+GET /api/canvas/announcements?accessToken=your_token&canvasUrl=https://canvas.instructure.com&courseIds=[12345,67890]
+```
 
-```javascript
-// GET request
-const courseIds = JSON.stringify([12345, 67890]);
-const response = await fetch(`/api/canvas/announcements?accessToken=YOUR_TOKEN&canvasUrl=https://dlsu.instructure.com&courseIds=${encodeURIComponent(courseIds)}`);
+#### `POST /api/canvas/announcements`
 
-// POST request
-const response = await fetch('/api/canvas/announcements', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    accessToken: 'YOUR_TOKEN',
-    canvasUrl: 'https://dlsu.instructure.com',
-    courseIds: [12345, 67890]
-  })
-});
+**Request Body:**
+```json
+{
+  "accessToken": "your_canvas_token",
+  "canvasUrl": "https://canvas.instructure.com",
+  "courseIds": [12345, 67890]
+}
 ```
 
 **Response:**
@@ -147,9 +177,9 @@ const response = await fetch('/api/canvas/announcements', {
   "data": [
     {
       "id": 11111,
-      "title": "Important Update",
+      "title": "Welcome to the Course!",
       "posted_at": "2024-01-01T10:00:00Z",
-      "url": "https://canvas.url/announcements/11111",
+      "url": "https://canvas.instructure.com/courses/12345/discussion_topics/11111",
       "course_id": 12345
     }
   ],
@@ -157,64 +187,59 @@ const response = await fetch('/api/canvas/announcements', {
 }
 ```
 
-### 4. Get Dashboard Data (Comprehensive)
-Fetches all data in one request: courses, assignments, and announcements. This endpoint mirrors the Python script functionality and provides a structured dashboard view.
+---
 
-**Endpoint:** `/api/canvas/dashboard`
+### 4. Get Dashboard Data
 
-**Methods:** GET, POST
+Retrieves consolidated dashboard data including courses, assignments, and announcements.
 
-**Parameters:**
+#### `GET /api/canvas/dashboard`
+
+**Query Parameters:**
 - `accessToken` (required): Canvas API access token
 - `canvasUrl` (required): Canvas instance URL
 
-**Example Usage:**
+**Example:**
+```
+GET /api/canvas/dashboard?accessToken=your_token&canvasUrl=https://canvas.instructure.com
+```
 
-```javascript
-// GET request
-const response = await fetch('/api/canvas/dashboard?accessToken=YOUR_TOKEN&canvasUrl=https://dlsu.instructure.com');
+#### `POST /api/canvas/dashboard`
 
-// POST request
-const response = await fetch('/api/canvas/dashboard', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    accessToken: 'YOUR_TOKEN',
-    canvasUrl: 'https://dlsu.instructure.com'
-  })
-});
+**Request Body:**
+```json
+{
+  "accessToken": "your_canvas_token",
+  "canvasUrl": "https://canvas.instructure.com"
+}
 ```
 
 **Response:**
 ```json
 {
   "data": {
-    "report_generated_on": "2024-01-01T12:00:00.000Z",
+    "report_generated_on": "2024-01-01T12:00:00Z",
     "entities": {
       "courses": {
         "12345": {
           "id": 12345,
-          "name": "Computer Science 101"
+          "name": "Introduction to Computer Science"
         }
       },
       "assignments": {
         "67890": {
           "id": 67890,
-          "name": "Final Project",
+          "name": "Homework Assignment 1",
           "course_id": 12345,
           "due_at": "2024-01-15T23:59:00Z",
-          "html_url": "https://canvas.url/assignments/67890",
-          "points_possible": 100,
-          "submission_status": "Not Submitted",
-          "assignment_group_id": 1001
+          "submission_status": "Not Submitted"
         }
       },
       "announcements": {
         "11111": {
           "id": 11111,
-          "title": "Important Update",
+          "title": "Welcome to the Course!",
           "posted_at": "2024-01-01T10:00:00Z",
-          "url": "https://canvas.url/announcements/11111",
           "course_id": 12345
         }
       }
@@ -234,59 +259,164 @@ const response = await fetch('/api/canvas/dashboard', {
 }
 ```
 
-## Error Handling
+## Data Types
 
-All endpoints return consistent error responses:
+### Course
+```typescript
+interface Course {
+  id: number;
+  name: string;
+  course_code?: string;
+  uuid?: string;
+}
+```
 
+### ProcessedAssignment
+```typescript
+interface ProcessedAssignment {
+  id: number;
+  name: string;
+  course_id: number;
+  due_at: string | null;
+  html_url: string;
+  points_possible: number | null;
+  submission_status: string;
+  assignment_group_id: number;
+  locked_for_user: boolean;
+  lock_info: LockInfo | null;
+  can_submit: boolean;
+  submission_types: string[];
+  grade?: number;
+}
+```
+
+### ProcessedAnnouncement
+```typescript
+interface ProcessedAnnouncement {
+  id: number;
+  title: string;
+  posted_at: string | null;
+  url: string;
+  course_id: number;
+}
+```
+
+### DashboardData
+```typescript
+interface DashboardData {
+  report_generated_on: string;
+  entities: {
+    courses: Record<number, Course>;
+    assignments: Record<number, ProcessedAssignment>;
+    announcements: Record<number, ProcessedAnnouncement>;
+  };
+  views: {
+    upcoming_assignments: number[];
+    unsubmitted_assignments: number[];
+    assignments_by_course: Record<number, number[]>;
+    announcements_by_course: Record<number, number[]>;
+  };
+}
+```
+
+## Error Codes
+
+| Status Code | Description |
+|-------------|-------------|
+| 200 | Success |
+| 400 | Bad Request - Missing or invalid parameters |
+| 500 | Internal Server Error - Canvas API error or server issue |
+
+## Error Examples
+
+### Missing Parameters
 ```json
 {
   "data": null,
   "success": false,
-  "error": "Error message description"
+  "error": "Missing required parameters: accessToken and canvasUrl"
 }
 ```
 
-**Common Error Cases:**
-- Missing required parameters (400)
-- Invalid access token (401)
-- Invalid course ID format (400)
-- Canvas API errors (500)
-- Network connectivity issues (500)
+### Invalid Course ID
+```json
+{
+  "data": null,
+  "success": false,
+  "error": "Invalid courseId: must be a number"
+}
+```
 
-## Features
+### Canvas API Error
+```json
+{
+  "data": null,
+  "success": false,
+  "error": "Canvas API Error: 401 Unauthorized"
+}
+```
 
-### Performance Optimizations
-- **Pagination Handling**: Automatically handles Canvas API pagination to fetch all results
-- **Concurrent Requests**: Dashboard endpoint fetches assignments for multiple courses concurrently
-- **Error Isolation**: Individual course failures don't prevent other data from being fetched
+## Rate Limiting
 
-### Data Processing
-- **Assignment Categorization**: Automatically categorizes assignments as upcoming or unsubmitted
-- **Status Normalization**: Converts Canvas submission states to readable formats
-- **Grade Inclusion**: Includes grades when assignments are graded
+⚠️ **Note**: This API does not currently implement rate limiting. In production, consider:
+- Implementing rate limiting to prevent abuse
+- Caching responses to reduce Canvas API calls
+- Using authentication middleware
 
-### Type Safety
-- Full TypeScript support with proper type definitions
-- Strongly typed API responses
-- Runtime parameter validation
+## Security Considerations
 
-## Best Practices
+1. **Token Security**: Never expose Canvas access tokens in client-side code
+2. **HTTPS Only**: Always use HTTPS in production
+3. **Input Validation**: All inputs are validated, but additional sanitization may be needed
+4. **CORS**: Configure CORS headers if accessing from different domains
 
-1. **Use POST for Sensitive Tokens**: While GET is supported, prefer POST to keep access tokens out of URL logs
-2. **Cache Results**: Consider caching responses to reduce API calls
-3. **Handle Errors Gracefully**: Always check the `success` field in responses
-4. **Use Dashboard Endpoint**: For comprehensive data, use `/dashboard` instead of multiple individual calls
-5. **Rate Limiting**: Be mindful of Canvas API rate limits in production
+## Usage Examples
 
-## Development Testing
+### JavaScript/TypeScript
+```javascript
+// Using fetch API
+const response = await fetch('/api/canvas/courses', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    accessToken: 'your_canvas_token',
+    canvasUrl: 'https://canvas.instructure.com'
+  })
+});
 
-You can test the endpoints using tools like Postman or curl:
+const result = await response.json();
+if (result.success) {
+  console.log('Courses:', result.data);
+} else {
+  console.error('Error:', result.error);
+}
+```
 
+### cURL
 ```bash
-curl -X POST http://localhost:3000/api/canvas/dashboard \
+# GET request
+curl "https://your-domain.com/api/canvas/courses?accessToken=your_token&canvasUrl=https://canvas.instructure.com"
+
+# POST request
+curl -X POST https://your-domain.com/api/canvas/courses \
   -H "Content-Type: application/json" \
   -d '{
-    "accessToken": "YOUR_TOKEN",
-    "canvasUrl": "https://dlsu.instructure.com"
+    "accessToken": "your_canvas_token",
+    "canvasUrl": "https://canvas.instructure.com"
   }'
-``` 
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **401 Unauthorized**: Check if your Canvas access token is valid and has necessary permissions
+2. **Invalid URL**: Ensure your `canvasUrl` includes the protocol (https://)
+3. **Course not found**: Verify that course IDs exist and you have access to them
+4. **Network timeout**: Canvas API might be slow; consider implementing retry logic
+
+### Debug Information
+
+All API errors are logged server-side for debugging. Check your application logs for detailed error information. 

@@ -1,0 +1,1486 @@
+{
+    "report_generated_on": "2025-07-25T16:27:00.556079+00:00",
+    "entities": {
+        "courses": {
+            "206494": {
+                "id": 206494,
+                "name": "CCINOV8 - S11"
+            },
+            "206983": {
+                "id": 206983,
+                "name": "CSOPESY - S20"
+            },
+            "207238": {
+                "id": 207238,
+                "name": "EMPATHY - S15"
+            },
+            "206909": {
+                "id": 206909,
+                "name": "GEARTAP - Z20"
+            },
+            "207633": {
+                "id": 207633,
+                "name": "GESTSOC - Y12"
+            },
+            "207966": {
+                "id": 207966,
+                "name": "LASARE3 - V24"
+            },
+            "209218": {
+                "id": 209218,
+                "name": "LCLSTRI - Y23"
+            },
+            "210773": {
+                "id": 210773,
+                "name": "STCLOUD - S14"
+            },
+            "211333": {
+                "id": 211333,
+                "name": "THESIS - S15"
+            },
+            "216299": {
+                "id": 216299,
+                "name": "1243_CCS_PRECINT"
+            },
+            "213300": {
+                "id": 213300,
+                "name": "1243_LIBRES-General"
+            },
+            "215850": {
+                "id": 215850,
+                "name": "CCS Animoment Consent Form"
+            },
+            "167136": {
+                "id": 167136,
+                "name": "CCS Animospace Student Lounge"
+            },
+            "204699": {
+                "id": 204699,
+                "name": "CCS Student Handbook"
+            }
+        },
+        "assignments": {
+            "2067943": {
+                "id": 2067943,
+                "name": "Join a Team",
+                "course_id": 206494,
+                "due_at": "2025-05-09T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/206494/assignments/2067943",
+                "points_possible": null,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 523047
+            },
+            "2054668": {
+                "id": 2054668,
+                "name": "Iteration 0: Find Customers & Problems",
+                "course_id": 206494,
+                "due_at": "2025-05-16T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206494/assignments/2054668",
+                "points_possible": 10.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 523047,
+                "grade": 8.0
+            },
+            "2054670": {
+                "id": 2054670,
+                "name": "Iteration 1",
+                "course_id": 206494,
+                "due_at": "2025-05-23T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206494/assignments/2054670",
+                "points_possible": 10.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 523047,
+                "grade": 9.0
+            },
+            "2054672": {
+                "id": 2054672,
+                "name": "Iteration 2",
+                "course_id": 206494,
+                "due_at": "2025-05-30T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206494/assignments/2054672",
+                "points_possible": 10.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 523047
+            },
+            "2054674": {
+                "id": 2054674,
+                "name": "Iteration 3",
+                "course_id": 206494,
+                "due_at": "2025-06-06T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206494/assignments/2054674",
+                "points_possible": 10.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 523047
+            },
+            "2054676": {
+                "id": 2054676,
+                "name": "Iteration 4",
+                "course_id": 206494,
+                "due_at": "2025-06-13T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206494/assignments/2054676",
+                "points_possible": 10.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 523047
+            },
+            "2054678": {
+                "id": 2054678,
+                "name": "Iteration 5",
+                "course_id": 206494,
+                "due_at": "2025-06-27T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206494/assignments/2054678",
+                "points_possible": 10.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 523047
+            },
+            "2054680": {
+                "id": 2054680,
+                "name": "Iteration 6",
+                "course_id": 206494,
+                "due_at": "2025-07-11T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206494/assignments/2054680",
+                "points_possible": 10.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 523047
+            },
+            "2054682": {
+                "id": 2054682,
+                "name": "Final Pitch & MVP",
+                "course_id": 206494,
+                "due_at": "2025-07-29T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206494/assignments/2054682",
+                "points_possible": 20.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 523047
+            },
+            "2054684": {
+                "id": 2054684,
+                "name": "Team Contribution",
+                "course_id": 206494,
+                "due_at": "2025-07-31T15:59:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206494/assignments/2054684",
+                "points_possible": 10.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 523047
+            },
+            "2054688": {
+                "id": 2054688,
+                "name": "Midterm Exam",
+                "course_id": 206494,
+                "due_at": "2025-06-17T11:30:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206494/assignments/2054688",
+                "points_possible": 19.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 539702,
+                "grade": 14.5
+            },
+            "2037186": {
+                "id": 2037186,
+                "name": "Week 1 - Homework - Introductory Quiz",
+                "course_id": 206983,
+                "due_at": "2025-05-10T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037186",
+                "points_possible": 15.0,
+                "submission_status": "Pending Review",
+                "assignment_group_id": 530021
+            },
+            "2037222": {
+                "id": 2037222,
+                "name": "Week 2 - Group Homework - Setting up your OS emulator",
+                "course_id": 206983,
+                "due_at": "2025-05-17T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037222",
+                "points_possible": 25.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 530021
+            },
+            "2037142": {
+                "id": 2037142,
+                "name": "FOR FILLING UP - CSOPESY Midterm Exam - Find a time",
+                "course_id": 206983,
+                "due_at": "2025-05-24T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037142",
+                "points_possible": 10.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 530021
+            },
+            "2037242": {
+                "id": 2037242,
+                "name": "Week 4 - Homework - Creating customized CLI layouts",
+                "course_id": 206983,
+                "due_at": "2025-05-31T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037242",
+                "points_possible": 20.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 530021
+            },
+            "2037267": {
+                "id": 2037267,
+                "name": "Week 6 - Group Homework - FCFS scheduler in OS emulator",
+                "course_id": 206983,
+                "due_at": "2025-06-14T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037267",
+                "points_possible": 40.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 530021
+            },
+            "2037275": {
+                "id": 2037275,
+                "name": "Week 10 - Group Homework - Implementing the first-fit memory allocator with round-robin scheduler",
+                "course_id": 206983,
+                "due_at": "2025-07-12T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037275",
+                "points_possible": 40.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 530021
+            },
+            "2108145": {
+                "id": 2108145,
+                "name": "Week 4 - Homework - Creating Customized CLI Layouts",
+                "course_id": 206983,
+                "due_at": "2025-06-06T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2108145",
+                "points_possible": 20.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 530021
+            },
+            "2119224": {
+                "id": 2119224,
+                "name": "CSOPESY - Mock Midterm Exam",
+                "course_id": 206983,
+                "due_at": "2025-06-18T01:50:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2119224",
+                "points_possible": 20.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 530021
+            },
+            "2108148": {
+                "id": 2108148,
+                "name": "Week 3 - Group Homework - Designing Console Layouts",
+                "course_id": 206983,
+                "due_at": "2025-05-28T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2108148",
+                "points_possible": 30.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 530021
+            },
+            "2121970": {
+                "id": 2121970,
+                "name": "Week 6 - Group Homework - FCFS scheduler in OS emulator (v2)",
+                "course_id": 206983,
+                "due_at": "2025-06-20T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2121970",
+                "points_possible": 40.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 530021
+            },
+            "2152766": {
+                "id": 2152766,
+                "name": "Week 10 - Group Homework - Implementing the first-fit memory allocator with round-robin scheduler (v2)",
+                "course_id": 206983,
+                "due_at": "2025-07-31T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2152766",
+                "points_possible": 40.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 530021
+            },
+            "2152772": {
+                "id": 2152772,
+                "name": "Week 11 - Homework - Paging problems (v2)",
+                "course_id": 206983,
+                "due_at": "2025-07-29T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2152772",
+                "points_possible": 20.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 530021
+            },
+            "2111655": {
+                "id": 2111655,
+                "name": "CSOPESY - Midterm Exam",
+                "course_id": 206983,
+                "due_at": "2025-07-04T12:30:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2111655",
+                "points_possible": 125.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 530024,
+                "grade": 90.0
+            },
+            "2037181": {
+                "id": 2037181,
+                "name": "PRACTICE - Test Case Upload Check",
+                "course_id": 206983,
+                "due_at": "2025-05-31T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037181",
+                "points_possible": 40.0,
+                "submission_status": "Pending Review",
+                "assignment_group_id": 530028
+            },
+            "2037158": {
+                "id": 2037158,
+                "name": "MO1 - Process Multiplexer and CLI - Grade",
+                "course_id": 206983,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037158",
+                "points_possible": 120.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 530028
+            },
+            "2037164": {
+                "id": 2037164,
+                "name": "MOCKUP QUIZ - MO1 - Process Multiplexer and CLI",
+                "course_id": 206983,
+                "due_at": "2025-06-25T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037164",
+                "points_possible": 80.0,
+                "submission_status": "Pending Review",
+                "assignment_group_id": 530028
+            },
+            "2037128": {
+                "id": 2037128,
+                "name": "ACTUAL QUIZ - MO1 - Process Multiplexer and CLI",
+                "course_id": 206983,
+                "due_at": "2025-06-28T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037128",
+                "points_possible": 120.0,
+                "submission_status": "Pending Review",
+                "assignment_group_id": 530028
+            },
+            "2037135": {
+                "id": 2037135,
+                "name": "ACTUAL QUIZ - MO2 - Multitasking OS",
+                "course_id": 206983,
+                "due_at": "2025-08-02T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037135",
+                "points_possible": 120.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 530028
+            },
+            "2037170": {
+                "id": 2037170,
+                "name": "MOCKUP QUIZ - MO2 - Multitasking OS",
+                "course_id": 206983,
+                "due_at": "2025-07-26T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037170",
+                "points_possible": 60.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 530028
+            },
+            "2037162": {
+                "id": 2037162,
+                "name": "MO2 - Multitasking OS - Grade",
+                "course_id": 206983,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037162",
+                "points_possible": 120.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 530028
+            },
+            "2037250": {
+                "id": 2037250,
+                "name": "Semi-MO - Immediate-mode mockup - the marquee console",
+                "course_id": 206983,
+                "due_at": "2025-06-14T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037250",
+                "points_possible": 30.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 530028
+            },
+            "2037151": {
+                "id": 2037151,
+                "name": "Final Exam - Multiple Choice",
+                "course_id": 206983,
+                "due_at": "2025-08-05T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037151",
+                "points_possible": 60.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 530031
+            },
+            "2037155": {
+                "id": 2037155,
+                "name": "Final Exam - Problem Solving",
+                "course_id": 206983,
+                "due_at": "2025-08-05T15:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206983/assignments/2037155",
+                "points_possible": 40.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 530031
+            },
+            "2097116": {
+                "id": 2097116,
+                "name": "Assignment",
+                "course_id": 207238,
+                "due_at": "2025-05-26T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/207238/assignments/2097116",
+                "points_possible": 20.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 538630,
+                "grade": 20.0
+            },
+            "2097119": {
+                "id": 2097119,
+                "name": "Oral Presentation",
+                "course_id": 207238,
+                "due_at": "2025-07-31T07:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/207238/assignments/2097119",
+                "points_possible": 10.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 538631
+            },
+            "2097117": {
+                "id": 2097117,
+                "name": "Webinar Report 1",
+                "course_id": 207238,
+                "due_at": "2025-06-11T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/207238/assignments/2097117",
+                "points_possible": 5.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 538630,
+                "grade": 5.0
+            },
+            "2097120": {
+                "id": 2097120,
+                "name": "Project Demonstration ",
+                "course_id": 207238,
+                "due_at": "2025-07-31T07:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/207238/assignments/2097120",
+                "points_possible": 40.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 538631
+            },
+            "2097118": {
+                "id": 2097118,
+                "name": "Webinar Report 2",
+                "course_id": 207238,
+                "due_at": "2025-08-04T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/207238/assignments/2097118",
+                "points_possible": 5.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 538630
+            },
+            "2097121": {
+                "id": 2097121,
+                "name": "IEEE Paper",
+                "course_id": 207238,
+                "due_at": "2025-07-31T07:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/207238/assignments/2097121",
+                "points_possible": 20.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 549165
+            },
+            "2042590": {
+                "id": 2042590,
+                "name": "Roll Call Attendance",
+                "course_id": 206909,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2042590",
+                "points_possible": 100.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 548043,
+                "grade": 100.0
+            },
+            "2112133": {
+                "id": 2112133,
+                "name": "Dito Mismo at Teorya ng Paglikha",
+                "course_id": 206909,
+                "due_at": "2025-06-12T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2112133",
+                "points_possible": 20.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 531816
+            },
+            "2042578": {
+                "id": 2042578,
+                "name": "My Life and Art",
+                "course_id": 206909,
+                "due_at": "2025-05-08T15:59:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2042578",
+                "points_possible": 20.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 531816,
+                "grade": 20.0
+            },
+            "2112132": {
+                "id": 2112132,
+                "name": "The Freewall ",
+                "course_id": 206909,
+                "due_at": "2025-06-02T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2112132",
+                "points_possible": 20.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 531816,
+                "grade": 20.0
+            },
+            "2112135": {
+                "id": 2112135,
+                "name": "The Zone of Freedom",
+                "course_id": 206909,
+                "due_at": "2025-06-05T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2112135",
+                "points_possible": 20.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 531816
+            },
+            "2119443": {
+                "id": 2119443,
+                "name": "Records of Things Seen",
+                "course_id": 206909,
+                "due_at": "2025-06-19T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2119443",
+                "points_possible": 20.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 531816
+            },
+            "2104604": {
+                "id": 2104604,
+                "name": "Alternative Class: Southeast Asia Artistic Freedom RADAR",
+                "course_id": 206909,
+                "due_at": "2025-05-15T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2104604",
+                "points_possible": 0.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 531817
+            },
+            "2092177": {
+                "id": 2092177,
+                "name": "Register for Alternative Class on May 15",
+                "course_id": 206909,
+                "due_at": "2025-05-14T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2092177",
+                "points_possible": null,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 531817
+            },
+            "2104708": {
+                "id": 2104708,
+                "name": "Group reflection on May 19 activity",
+                "course_id": 206909,
+                "due_at": "2025-05-19T05:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2104708",
+                "points_possible": 20.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 531817,
+                "grade": 20.0
+            },
+            "2117514": {
+                "id": 2117514,
+                "name": "Spoken word performance discussion ",
+                "course_id": 206909,
+                "due_at": "2025-06-09T05:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2117514",
+                "points_possible": 20.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 531817
+            },
+            "2120553": {
+                "id": 2120553,
+                "name": "Zoom In/Zoom Out activity ",
+                "course_id": 206909,
+                "due_at": "2025-06-16T04:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2120553",
+                "points_possible": 20.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 531817
+            },
+            "2122639": {
+                "id": 2122639,
+                "name": "Important dates for the final project ",
+                "course_id": 206909,
+                "due_at": "2025-07-26T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2122639",
+                "points_possible": null,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 531818
+            },
+            "2122638": {
+                "id": 2122638,
+                "name": "Sign up for your Art Drop x Advocacy proposal group",
+                "course_id": 206909,
+                "due_at": "2025-06-26T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2122638",
+                "points_possible": 0.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 531818
+            },
+            "2124557": {
+                "id": 2124557,
+                "name": "Proposal presentation schedule for July 10 and July 14",
+                "course_id": 206909,
+                "due_at": "2025-07-14T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2124557",
+                "points_possible": 0.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 531818
+            },
+            "2122637": {
+                "id": 2122637,
+                "name": "Art Drop x Advocacy Project Proposal presentation ",
+                "course_id": 206909,
+                "due_at": "2025-07-11T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2122637",
+                "points_possible": 50.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 531818
+            },
+            "2092132": {
+                "id": 2092132,
+                "name": "The Look of the Sound",
+                "course_id": 206909,
+                "due_at": "2025-05-29T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2092132",
+                "points_possible": 20.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 531819,
+                "grade": 20.0
+            },
+            "2128029": {
+                "id": 2128029,
+                "name": "Submit a photo of art drop installation here",
+                "course_id": 206909,
+                "due_at": "2025-07-31T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2128029",
+                "points_possible": 50.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 531819
+            },
+            "2118374": {
+                "id": 2118374,
+                "name": "Register for Art in Action performance on July 10 (2 shows)",
+                "course_id": 206909,
+                "due_at": "2025-07-04T11:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2118374",
+                "points_possible": 0.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 531820
+            },
+            "2118373": {
+                "id": 2118373,
+                "name": "Art in Action show@DLSU Manila (for extra credit)",
+                "course_id": 206909,
+                "due_at": "2025-07-10T15:30:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2118373",
+                "points_possible": 30.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 531820
+            },
+            "2141281": {
+                "id": 2141281,
+                "name": "Visit MCAD Manila at DLSU College of St Benilde (For extra credit)",
+                "course_id": 206909,
+                "due_at": "2025-07-28T10:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/206909/assignments/2141281",
+                "points_possible": 15.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 531820
+            },
+            "2070873": {
+                "id": 2070873,
+                "name": "STE PROJECT: Step 1",
+                "course_id": 207633,
+                "due_at": "2025-06-20T00:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/207633/assignments/2070873",
+                "points_possible": 5.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 540729
+            },
+            "2070874": {
+                "id": 2070874,
+                "name": "STS Project Step 2: Review of Related Literature",
+                "course_id": 207633,
+                "due_at": "2025-07-18T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/207633/assignments/2070874",
+                "points_possible": 15.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 540729
+            },
+            "2070875": {
+                "id": 2070875,
+                "name": "STS Project Step 3 Project Solution Development",
+                "course_id": 207633,
+                "due_at": "2025-08-08T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/207633/assignments/2070875",
+                "points_possible": 15.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 540729
+            },
+            "2070869": {
+                "id": 2070869,
+                "name": "Competition vs Cooperation",
+                "course_id": 207633,
+                "due_at": "2025-06-27T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/207633/assignments/2070869",
+                "points_possible": 5.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 540730
+            },
+            "2070867": {
+                "id": 2070867,
+                "name": "And the Band Played On",
+                "course_id": 207633,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/207633/assignments/2070867",
+                "points_possible": 5.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 540730
+            },
+            "2070870": {
+                "id": 2070870,
+                "name": "Concept Map on Ascent of Science and Scientism",
+                "course_id": 207633,
+                "due_at": "2025-05-16T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/207633/assignments/2070870",
+                "points_possible": 10.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 540731
+            },
+            "2070866": {
+                "id": 2070866,
+                "name": "Exam 1",
+                "course_id": 207633,
+                "due_at": "2025-07-11T07:30:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/207633/assignments/2070866",
+                "points_possible": 15.0,
+                "submission_status": "Pending Review",
+                "assignment_group_id": 540732
+            },
+            "2070872": {
+                "id": 2070872,
+                "name": "Paired work and quiz",
+                "course_id": 207633,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/207633/assignments/2070872",
+                "points_possible": 10.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 540733
+            },
+            "2082305": {
+                "id": 2082305,
+                "name": "Consent Form Submission",
+                "course_id": 207966,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/207966/assignments/2082305",
+                "points_possible": 3.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 542113
+            },
+            "2082327": {
+                "id": 2082327,
+                "name": "Telegram Channel for LASARE3",
+                "course_id": 207966,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/207966/assignments/2082327",
+                "points_possible": 1.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 542113
+            },
+            "2082315": {
+                "id": 2082315,
+                "name": "Retreat Day 1 Attendance Check",
+                "course_id": 207966,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/207966/assignments/2082315",
+                "points_possible": 1.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 542113
+            },
+            "2082323": {
+                "id": 2082323,
+                "name": "Retreat Day 2 Attendance Check",
+                "course_id": 207966,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/207966/assignments/2082323",
+                "points_possible": 1.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 542113
+            },
+            "2082294": {
+                "id": 2082294,
+                "name": "[Final Output] Comfort Cross Photo",
+                "course_id": 207966,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/207966/assignments/2082294",
+                "points_possible": 3.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 542113
+            },
+            "2025791": {
+                "id": 2025791,
+                "name": "Module 2: Lasallian Story Group Presentation",
+                "course_id": 209218,
+                "due_at": "2025-05-23T15:59:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/209218/assignments/2025791",
+                "points_possible": 100.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 525571
+            },
+            "2155426": {
+                "id": 2155426,
+                "name": "Module 3: Watch Pilgrim's theme",
+                "course_id": 209218,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/209218/assignments/2155426",
+                "points_possible": 10.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 525571
+            },
+            "2025738": {
+                "id": 2025738,
+                "name": "Module 4: Watch Bawat Daan",
+                "course_id": 209218,
+                "due_at": "2025-06-27T15:59:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/209218/assignments/2025738",
+                "points_possible": 10.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 525571
+            },
+            "2025786": {
+                "id": 2025786,
+                "name": "Module 2 Reflection on Mission and  Association",
+                "course_id": 209218,
+                "due_at": "2025-05-30T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/209218/assignments/2025786",
+                "points_possible": 100.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 525572
+            },
+            "2025796": {
+                "id": 2025796,
+                "name": "Module 3 Reflection on Vocation",
+                "course_id": 209218,
+                "due_at": "2025-07-04T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/209218/assignments/2025796",
+                "points_possible": 100.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 525572
+            },
+            "2025802": {
+                "id": 2025802,
+                "name": "Module 4 Reflection Discernment",
+                "course_id": 209218,
+                "due_at": "2025-07-11T15:59:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/209218/assignments/2025802",
+                "points_possible": 100.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 525572
+            },
+            "2025778": {
+                "id": 2025778,
+                "name": "Group Heroic Vow",
+                "course_id": 209218,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/209218/assignments/2025778",
+                "points_possible": 20.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 525573
+            },
+            "2025774": {
+                "id": 2025774,
+                "name": "Alumni Witnessing Interview",
+                "course_id": 209218,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/209218/assignments/2025774",
+                "points_possible": 15.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 525574
+            },
+            "2025813": {
+                "id": 2025813,
+                "name": "Peer Evaluation (Revised)",
+                "course_id": 209218,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/209218/assignments/2025813",
+                "points_possible": 10.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 525575
+            },
+            "2025781": {
+                "id": 2025781,
+                "name": "LS Student Feedback",
+                "course_id": 209218,
+                "due_at": "2025-07-28T09:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/209218/assignments/2025781",
+                "points_possible": null,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 525576
+            },
+            "2107507": {
+                "id": 2107507,
+                "name": "[D1] Introducing Traditional, Virtualization, and Cloud",
+                "course_id": 210773,
+                "due_at": "2025-05-26T15:59:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/210773/assignments/2107507",
+                "points_possible": 5.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 541977
+            },
+            "2107524": {
+                "id": 2107524,
+                "name": "[D2] Benefits of Virtualization",
+                "course_id": 210773,
+                "due_at": "2025-06-02T15:59:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/210773/assignments/2107524",
+                "points_possible": 5.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 541977
+            },
+            "2107501": {
+                "id": 2107501,
+                "name": "[D3] Inside Amazon's Massive Datacenter",
+                "course_id": 210773,
+                "due_at": "2025-07-14T15:59:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/210773/assignments/2107501",
+                "points_possible": 5.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 541977
+            },
+            "2122623": {
+                "id": 2122623,
+                "name": "[LE1] Long Exam 1",
+                "course_id": 210773,
+                "due_at": "2025-06-19T05:38:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/210773/assignments/2122623",
+                "points_possible": 40.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 541978,
+                "grade": 32.0
+            },
+            "2107484": {
+                "id": 2107484,
+                "name": "[K1] Knowledge Check 1",
+                "course_id": 210773,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/210773/assignments/2107484",
+                "points_possible": 5.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 541978,
+                "grade": 5.0
+            },
+            "2107479": {
+                "id": 2107479,
+                "name": "[K2] Knowledge Check 2",
+                "course_id": 210773,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/210773/assignments/2107479",
+                "points_possible": 5.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 541978,
+                "grade": 5.0
+            },
+            "2107490": {
+                "id": 2107490,
+                "name": "[K3] Knowledge Check 3",
+                "course_id": 210773,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/210773/assignments/2107490",
+                "points_possible": 5.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 541978,
+                "grade": 5.0
+            },
+            "2115955": {
+                "id": 2115955,
+                "name": "[K4] Knowledge Check 4",
+                "course_id": 210773,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/210773/assignments/2115955",
+                "points_possible": 5.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 541978,
+                "grade": 5.0
+            },
+            "2138159": {
+                "id": 2138159,
+                "name": "[K6] Knowledge Check 6",
+                "course_id": 210773,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/210773/assignments/2138159",
+                "points_possible": 5.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 541978,
+                "grade": 5.0
+            },
+            "2075508": {
+                "id": 2075508,
+                "name": "Mini Project 1 - Public Cloud Products and Services",
+                "course_id": 210773,
+                "due_at": "2025-06-05T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/210773/assignments/2075508",
+                "points_possible": 30.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 541980
+            },
+            "2075510": {
+                "id": 2075510,
+                "name": "Mini Project 2 - Cost Estimation of Traditional versus Cloud ",
+                "course_id": 210773,
+                "due_at": "2025-07-07T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/210773/assignments/2075510",
+                "points_possible": 30.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 541980
+            },
+            "2107797": {
+                "id": 2107797,
+                "name": "Roll Call Attendance",
+                "course_id": 210773,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/210773/assignments/2107797",
+                "points_possible": 100.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 541982,
+                "grade": 100.0
+            },
+            "2101936": {
+                "id": 2101936,
+                "name": "[Term-Long] Check document for TurnItIn Similarity Score",
+                "course_id": 211333,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/211333/assignments/2101936",
+                "points_possible": 0.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 550286
+            },
+            "2101999": {
+                "id": 2101999,
+                "name": "[Defense] Submission of Documents for THS-ST1 Defense",
+                "course_id": 211333,
+                "due_at": "2025-07-07T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/211333/assignments/2101999",
+                "points_possible": 0.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 550286
+            },
+            "2101935": {
+                "id": 2101935,
+                "name": "[MISC] Updated Thesis Title + Adviser Assignment",
+                "course_id": 211333,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/211333/assignments/2101935",
+                "points_possible": 0.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 550286
+            },
+            "2152769": {
+                "id": 2152769,
+                "name": "[CCS] ID 122 Voting Ballot",
+                "course_id": 216299,
+                "due_at": "2025-07-26T12:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/216299/assignments/2152769",
+                "points_possible": 100.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 554118
+            },
+            "2086903": {
+                "id": 2086903,
+                "name": "[LIBRES-General] ALTERNATIVE ACCESS TO INDEXED TURNITIN ASSIGNMENT TERM 3, AY 2024-25",
+                "course_id": 213300,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/213300/assignments/2086903",
+                "points_possible": 0.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 546739
+            },
+            "2108733": {
+                "id": 2108733,
+                "name": "Animoment Parent Consent Submission",
+                "course_id": 215850,
+                "due_at": "2025-08-13T15:59:59Z",
+                "html_url": "https://dlsu.instructure.com/courses/215850/assignments/2108733",
+                "points_possible": 1.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 551748
+            },
+            "1823180": {
+                "id": 1823180,
+                "name": "[PUSO] Annual General Membership Meeting of the Members of De La Salle University-Parents of University Students Organization (“DLSU-PUSO”)",
+                "course_id": 167136,
+                "due_at": null,
+                "html_url": "https://dlsu.instructure.com/courses/167136/assignments/1823180",
+                "points_possible": 100.0,
+                "submission_status": "Submitted",
+                "assignment_group_id": 478750
+            },
+            "1694733": {
+                "id": 1694733,
+                "name": "[USG OVPIA] Have you pre-enlisted?",
+                "course_id": 167136,
+                "due_at": "2024-05-28T12:00:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/167136/assignments/1694733",
+                "points_possible": 100.0,
+                "submission_status": "Graded",
+                "assignment_group_id": 478750,
+                "grade": 100.0
+            },
+            "2106567": {
+                "id": 2106567,
+                "name": "Student Handbook Acknowledgement Slip",
+                "course_id": 204699,
+                "due_at": "2025-08-13T15:59:00Z",
+                "html_url": "https://dlsu.instructure.com/courses/204699/assignments/2106567",
+                "points_possible": 2.0,
+                "submission_status": "Not Submitted",
+                "assignment_group_id": 519842
+            }
+        },
+        "announcements": {
+            "2103738": {
+                "id": 2103738,
+                "title": "[CSOPESY S19/S20] Week 12 ( July 26 Saturday) Session is ONLINE.",
+                "posted_at": "2025-07-25T14:14:48Z",
+                "url": "https://dlsu.instructure.com/courses/206983/discussion_topics/2103738",
+                "course_id": 206983
+            },
+            "2103401": {
+                "id": 2103401,
+                "title": "[General Elections 2025] Voting Procedures",
+                "posted_at": "2025-07-25T09:00:05Z",
+                "url": "https://dlsu.instructure.com/courses/216299/discussion_topics/2103401",
+                "course_id": 216299
+            },
+            "2102960": {
+                "id": 2102960,
+                "title": " [CSOPESY S19/S20] Week 12 ( July 26 Saturday) - Alternative Online Session (if face-to-face classes are suspended and/or there is heavy rain)",
+                "posted_at": "2025-07-25T05:33:26Z",
+                "url": "https://dlsu.instructure.com/courses/206983/discussion_topics/2102960",
+                "course_id": 206983
+            },
+            "2102577": {
+                "id": 2102577,
+                "title": "[CSOPESY - S19/S20] New Homework Due Date: Week 11 HW (Due: July 29 Tuesday), Week 10 HW (Due: July 31 Thursday)",
+                "posted_at": "2025-07-25T02:14:15Z",
+                "url": "https://dlsu.instructure.com/courses/206983/discussion_topics/2102577",
+                "course_id": 206983
+            },
+            "2102483": {
+                "id": 2102483,
+                "title": "[General Elections 2025] Resumption of Voting Period",
+                "posted_at": "2025-07-25T01:36:23Z",
+                "url": "https://dlsu.instructure.com/courses/216299/discussion_topics/2102483",
+                "course_id": 216299
+            },
+            "2101961": {
+                "id": 2101961,
+                "title": "July 25, 2025 Modality: ASYNCHRONOUS",
+                "posted_at": "2025-07-24T14:17:41Z",
+                "url": "https://dlsu.instructure.com/courses/207633/discussion_topics/2101961",
+                "course_id": 207633
+            },
+            "2101116": {
+                "id": 2101116,
+                "title": "Rescheduling due to Habagat",
+                "posted_at": null,
+                "url": "https://dlsu.instructure.com/courses/207966/discussion_topics/2101116",
+                "course_id": 207966
+            },
+            "2100684": {
+                "id": 2100684,
+                "title": "[General Elections 2025] Voting Period",
+                "posted_at": "2025-07-24T01:00:15Z",
+                "url": "https://dlsu.instructure.com/courses/216299/discussion_topics/2100684",
+                "course_id": 216299
+            },
+            "2100523": {
+                "id": 2100523,
+                "title": "Week 12 Project Consultation (Online)",
+                "posted_at": "2025-07-23T12:10:07Z",
+                "url": "https://dlsu.instructure.com/courses/207238/discussion_topics/2100523",
+                "course_id": 207238
+            },
+            "2099830": {
+                "id": 2099830,
+                "title": "Extra 5-points coursework distribution",
+                "posted_at": "2025-07-22T14:05:05Z",
+                "url": "https://dlsu.instructure.com/courses/207238/discussion_topics/2099830",
+                "course_id": 207238
+            },
+            "2099822": {
+                "id": 2099822,
+                "title": "Postponement of Technology Summit 2025",
+                "posted_at": "2025-07-22T14:00:35Z",
+                "url": "https://dlsu.instructure.com/courses/207238/discussion_topics/2099822",
+                "course_id": 207238
+            },
+            "2099481": {
+                "id": 2099481,
+                "title": "[CSOPESY - S19/S20] Week 11 Homework Due: July 25 (Friday) - Submission is online.",
+                "posted_at": "2025-07-22T08:44:27Z",
+                "url": "https://dlsu.instructure.com/courses/206983/discussion_topics/2099481",
+                "course_id": 206983
+            },
+            "2096626": {
+                "id": 2096626,
+                "title": "[CSOPESY - S19/S20] Grade Sheet (with MO1 and midterms score)",
+                "posted_at": "2025-07-20T20:54:03Z",
+                "url": "https://dlsu.instructure.com/courses/206983/discussion_topics/2096626",
+                "course_id": 206983
+            },
+            "2096492": {
+                "id": 2096492,
+                "title": "No synchronous class tom and next week",
+                "posted_at": "2025-07-20T13:21:07Z",
+                "url": "https://dlsu.instructure.com/courses/206909/discussion_topics/2096492",
+                "course_id": 206909
+            },
+            "2095628": {
+                "id": 2095628,
+                "title": "[CSOPESY S19, S20] NO CLASS today (Saturday, July 19) ",
+                "posted_at": "2025-07-18T19:28:33Z",
+                "url": "https://dlsu.instructure.com/courses/206983/discussion_topics/2095628",
+                "course_id": 206983
+            },
+            "2094014": {
+                "id": 2094014,
+                "title": "Project Presentation Schedule at Week 13",
+                "posted_at": "2025-07-17T13:58:46Z",
+                "url": "https://dlsu.instructure.com/courses/207238/discussion_topics/2094014",
+                "course_id": 207238
+            },
+            "2091592": {
+                "id": 2091592,
+                "title": "Special Rescheduling of LASARE3 for those with conflict on July 25 and/or 26",
+                "posted_at": null,
+                "url": "https://dlsu.instructure.com/courses/207966/discussion_topics/2091592",
+                "course_id": 207966
+            },
+            "2091529": {
+                "id": 2091529,
+                "title": "REMINDER: Asynchronous Orientation",
+                "posted_at": null,
+                "url": "https://dlsu.instructure.com/courses/207966/discussion_topics/2091529",
+                "course_id": 207966
+            },
+            "2090857": {
+                "id": 2090857,
+                "title": "Online Faculty Evaluation",
+                "posted_at": "2025-07-14T10:29:06Z",
+                "url": "https://dlsu.instructure.com/courses/207238/discussion_topics/2090857",
+                "course_id": 207238
+            },
+            "2090855": {
+                "id": 2090855,
+                "title": "Promotion: DLSU Data Science - AI & ML Bootcamp",
+                "posted_at": "2025-07-14T10:26:31Z",
+                "url": "https://dlsu.instructure.com/courses/207238/discussion_topics/2090855",
+                "course_id": 207238
+            },
+            "2090841": {
+                "id": 2090841,
+                "title": "Week 11 - Zoom Recording",
+                "posted_at": "2025-07-14T10:11:43Z",
+                "url": "https://dlsu.instructure.com/courses/207238/discussion_topics/2090841",
+                "course_id": 207238
+            }
+        }
+    },
+    "views": {
+        "upcoming_assignments": [
+            2054682,
+            2054684,
+            2152766,
+            2152772,
+            2037135,
+            2037170,
+            2037151,
+            2037155,
+            2097119,
+            2097120,
+            2097118,
+            2097121,
+            2122639,
+            2128029,
+            2141281,
+            2070875,
+            2025781,
+            2152769,
+            2108733,
+            2106567
+        ],
+        "unsubmitted_assignments": [
+            2067943,
+            2119224,
+            2121970,
+            2104604,
+            2092177,
+            2120553,
+            2122638,
+            2124557,
+            2118374,
+            2118373
+        ],
+        "assignments_by_course": {
+            "206494": [
+                2067943,
+                2054668,
+                2054670,
+                2054672,
+                2054674,
+                2054676,
+                2054678,
+                2054680,
+                2054682,
+                2054684,
+                2054688
+            ],
+            "206983": [
+                2037186,
+                2037222,
+                2037142,
+                2037242,
+                2037267,
+                2037275,
+                2108145,
+                2119224,
+                2108148,
+                2121970,
+                2152766,
+                2152772,
+                2111655,
+                2037181,
+                2037158,
+                2037164,
+                2037128,
+                2037135,
+                2037170,
+                2037162,
+                2037250,
+                2037151,
+                2037155
+            ],
+            "207238": [
+                2097116,
+                2097119,
+                2097117,
+                2097120,
+                2097118,
+                2097121
+            ],
+            "206909": [
+                2042590,
+                2112133,
+                2042578,
+                2112132,
+                2112135,
+                2119443,
+                2104604,
+                2092177,
+                2104708,
+                2117514,
+                2120553,
+                2122639,
+                2122638,
+                2124557,
+                2122637,
+                2092132,
+                2128029,
+                2118374,
+                2118373,
+                2141281
+            ],
+            "207633": [
+                2070873,
+                2070874,
+                2070875,
+                2070869,
+                2070867,
+                2070870,
+                2070866,
+                2070872
+            ],
+            "207966": [
+                2082305,
+                2082327,
+                2082315,
+                2082323,
+                2082294
+            ],
+            "209218": [
+                2025791,
+                2155426,
+                2025738,
+                2025786,
+                2025796,
+                2025802,
+                2025778,
+                2025774,
+                2025813,
+                2025781
+            ],
+            "210773": [
+                2107507,
+                2107524,
+                2107501,
+                2122623,
+                2107484,
+                2107479,
+                2107490,
+                2115955,
+                2138159,
+                2075508,
+                2075510,
+                2107797
+            ],
+            "211333": [
+                2101936,
+                2101999,
+                2101935
+            ],
+            "216299": [
+                2152769
+            ],
+            "213300": [
+                2086903
+            ],
+            "215850": [
+                2108733
+            ],
+            "167136": [
+                1823180,
+                1694733
+            ],
+            "204699": [
+                2106567
+            ]
+        },
+        "announcements_by_course": {
+            "206494": [],
+            "206983": [
+                2103738,
+                2102960,
+                2102577,
+                2099481,
+                2096626,
+                2095628
+            ],
+            "207238": [
+                2100523,
+                2099830,
+                2099822,
+                2094014,
+                2090857,
+                2090855,
+                2090841
+            ],
+            "206909": [
+                2096492
+            ],
+            "207633": [
+                2101961
+            ],
+            "207966": [
+                2101116,
+                2091592,
+                2091529
+            ],
+            "209218": [],
+            "210773": [],
+            "211333": [],
+            "216299": [
+                2103401,
+                2102483,
+                2100684
+            ],
+            "213300": [],
+            "215850": [],
+            "167136": [],
+            "204699": []
+        }
+    }
+}

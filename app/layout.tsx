@@ -1,21 +1,18 @@
-import type { Metadata } from "next";
-import "./globals.css";
+import './globals.css'
 
-export const metadata: Metadata = {
-  title: "Animodo",
-  description: "DLSU Canvas Tracker",
-};
+export const metadata = {
+  title: 'Animodo Dashboard',
+  description: 'Canvas dashboard application',
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <body>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
-  );
-}
+  )
+} 

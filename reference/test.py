@@ -10,6 +10,23 @@ ACCESS_TOKEN = "10225~f8NUVJnLAXVFrBEyhTHTcuNkvwHk6nTfh2P44CUWAEH9ahVE7wfQfxcQcH
 
 # --- Functions ---
 
+def get_account_name():
+    """Fetches the current user's account name."""
+    url = f"{CANVAS_URL}/api/v1/users/self"
+    headers = {"Authorization": f"Bearer {ACCESS_TOKEN}"}
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    account_info = response.json()
+    return account_info.get('name')
+
+def get_favorite_courses():
+    """Fetches the user's name courses."""
+    url = f"{CANVAS_URL}/api/v1/accounts"
+    headers = {"Authorization": f"Bearer {ACCESS_TOKEN}"}
+    response = requests.get(url, headers=headers)
+    response.raise_for_status()
+    return response.json()
+
 def get_favorite_courses():
     """Fetches the user's favorite courses."""
     url = f"{CANVAS_URL}/api/v1/users/self/favorites/courses"
@@ -95,6 +112,10 @@ def main():
         return
 
     try:
+        account_name = get_account_name()
+        if account_name:
+            print(f"Account Name: {account_name}")
+
         favorite_courses = get_favorite_courses()
         if not favorite_courses:
             print("No favorite courses found.")
