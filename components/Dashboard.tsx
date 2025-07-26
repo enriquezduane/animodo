@@ -344,14 +344,35 @@ export default function DashboardClient() {
                 .dashboard-layout {
                     display: flex;
                     height: 100vh;
-                    background: #f8f9fa;
+                    background: var(--background-primary);
+                    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                 }
 
                 .main-content {
                     flex: 1;
                     margin-left: 250px;
                     overflow-y: auto;
-                    background: #f8f9fa;
+                    background: var(--background-primary);
+                    min-height: 100vh;
+                }
+                
+                /* Responsive design */
+                @media (max-width: 768px) {
+                    .main-content {
+                        margin-left: 200px;
+                    }
+                }
+                
+                @media (max-width: 480px) {
+                    .dashboard-layout {
+                        flex-direction: column;
+                        height: auto;
+                    }
+                    
+                    .main-content {
+                        margin-left: 0;
+                        min-height: calc(100vh - 200px);
+                    }
                 }
             `}</style>
         </div>

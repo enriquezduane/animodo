@@ -252,48 +252,65 @@ export default function Announcements({
 
             <style jsx>{`
                 .announcements {
-                    padding: 20px;
+                    padding: var(--spacing-xl);
+                    background: var(--background-primary);
+                    min-height: 100vh;
                 }
                 
                 .announcements h1 {
-                    margin: 0 0 30px 0;
-                    color: #212529;
-                    font-size: 28px;
+                    margin: 0 0 var(--spacing-2xl) 0;
+                    color: var(--primary-color);
+                    font-size: var(--font-size-3xl);
+                    font-weight: 700;
+                    display: flex;
+                    align-items: center;
+                    gap: var(--spacing-md);
                 }
 
                 .filters {
                     display: flex;
-                    gap: 12px;
-                    margin-bottom: 30px;
+                    gap: var(--spacing-md);
+                    margin-bottom: var(--spacing-2xl);
                     flex-wrap: wrap;
+                    background: var(--background-secondary);
+                    padding: var(--spacing-xl);
+                    border-radius: var(--radius-lg);
+                    box-shadow: var(--shadow-md);
+                    border: 1px solid var(--border-color);
                 }
 
                 .filter-row {
                     display: flex;
-                    gap: 12px;
+                    gap: var(--spacing-md);
                     align-items: center;
+                    flex-wrap: wrap;
                 }
 
                 .filter-btn {
-                    padding: 8px 16px;
-                    border: 2px solid #dee2e6;
-                    background: white;
-                    border-radius: 6px;
+                    padding: var(--spacing-sm) var(--spacing-lg);
+                    border: 2px solid var(--border-color);
+                    background: var(--background-primary);
+                    border-radius: var(--radius-md);
                     cursor: pointer;
-                    font-size: 14px;
-                    color: #495057;
+                    font-size: var(--font-size-sm);
+                    color: var(--text-primary);
                     transition: all 0.2s ease;
+                    font-weight: 500;
+                    box-shadow: var(--shadow-sm);
                 }
 
                 .filter-btn:hover {
-                    border-color: #007bff;
-                    color: #007bff;
+                    border-color: var(--accent-color);
+                    color: var(--primary-color);
+                    transform: translateY(-1px);
+                    box-shadow: var(--shadow-md);
                 }
 
                 .filter-btn.active {
-                    background: #007bff;
-                    border-color: #007bff;
-                    color: white;
+                    background: linear-gradient(135deg, var(--accent-color), #8FB61F);
+                    border-color: var(--accent-color);
+                    color: var(--dark-gray);
+                    font-weight: 600;
                 }
 
                 .course-filter {
@@ -301,124 +318,205 @@ export default function Announcements({
                 }
 
                 .course-dropdown-btn {
-                    padding: 8px 16px;
-                    border: 2px solid #dee2e6;
-                    background: white;
-                    border-radius: 6px;
+                    padding: var(--spacing-sm) var(--spacing-lg);
+                    border: 2px solid var(--border-color);
+                    background: var(--background-primary);
+                    border-radius: var(--radius-md);
                     cursor: pointer;
-                    font-size: 14px;
-                    color: #495057;
+                    font-size: var(--font-size-sm);
+                    color: var(--text-primary);
                     transition: all 0.2s ease;
                     display: flex;
                     align-items: center;
-                    gap: 8px;
+                    gap: var(--spacing-sm);
+                    font-weight: 500;
+                    box-shadow: var(--shadow-sm);
                 }
 
                 .course-dropdown-btn:hover {
-                    border-color: #007bff;
-                    color: #007bff;
+                    border-color: var(--accent-color);
+                    color: var(--primary-color);
+                    transform: translateY(-1px);
+                    box-shadow: var(--shadow-md);
                 }
 
                 .course-dropdown {
                     position: absolute;
                     top: 100%;
                     left: 0;
-                    background: white;
-                    border: 1px solid #e9ecef;
-                    border-radius: 6px;
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                    background: var(--background-secondary);
+                    border: 2px solid var(--border-color);
+                    border-radius: var(--radius-md);
+                    box-shadow: var(--shadow-lg);
                     z-index: 1000;
-                    width: 250px;
-                    padding: 8px 0;
+                    width: 280px;
+                    padding: var(--spacing-sm) 0;
                     max-height: 300px;
                     overflow-y: auto;
+                    margin-top: var(--spacing-xs);
                 }
 
                 .course-option {
                     display: flex;
                     align-items: center;
-                    padding: 8px 12px;
+                    padding: var(--spacing-sm) var(--spacing-md);
                     cursor: pointer;
-                    transition: background-color 0.2s ease;
+                    transition: all 0.2s ease;
+                    font-size: var(--font-size-sm);
+                    color: var(--text-primary);
                 }
 
                 .course-option:hover {
-                    background-color: #f8f9fa;
+                    background-color: var(--background-primary);
+                    color: var(--primary-color);
                 }
 
                 .course-option input {
-                    margin-right: 10px;
-                    transform: scale(0.8);
+                    margin-right: var(--spacing-sm);
+                    transform: scale(0.9);
+                    accent-color: var(--accent-color);
                 }
 
                 .select-all-course-label {
                     display: flex;
                     align-items: center;
-                    padding: 8px 12px;
+                    padding: var(--spacing-sm) var(--spacing-md);
                     cursor: pointer;
-                    transition: background-color 0.2s ease;
-                    font-weight: bold;
-                    color: #495057;
+                    transition: all 0.2s ease;
+                    font-weight: 600;
+                    color: var(--primary-color);
+                    border-bottom: 1px solid var(--border-color);
+                    margin-bottom: var(--spacing-xs);
                 }
 
                 .select-all-course-label:hover {
-                    background-color: #f8f9fa;
+                    background-color: var(--background-primary);
                 }
 
                 .select-all-course-label input {
-                    margin-right: 10px;
-                    transform: scale(0.8);
+                    margin-right: var(--spacing-sm);
+                    transform: scale(0.9);
+                    accent-color: var(--accent-color);
                 }
 
                 .announcements-list {
                     display: flex;
                     flex-direction: column;
-                    gap: 12px;
+                    gap: var(--spacing-md);
+                    background: var(--background-secondary);
+                    border-radius: var(--radius-lg);
+                    box-shadow: var(--shadow-md);
+                    border: 1px solid var(--border-color);
+                    overflow: hidden;
                 }
 
                 .announcement-card {
-                    padding: 16px 20px;
-                    border-top: 1px solid #e9ecef;
-                    transition: background-color 0.2s ease;
+                    padding: var(--spacing-lg) var(--spacing-xl);
+                    border-top: 1px solid var(--border-color);
+                    transition: all 0.2s ease;
+                    background: var(--background-secondary);
+                }
+
+                .announcement-card:first-child {
+                    border-top: none;
                 }
 
                 .announcement-card:hover {
-                    background: #f8f9fa;
+                    background: var(--background-primary);
+                    transform: translateX(4px);
+                    box-shadow: inset 4px 0 0 var(--accent-color);
                 }
 
                 .announcement-header {
-                    margin-bottom: 8px;
+                    margin-bottom: var(--spacing-sm);
                 }
 
                 .announcement-title {
-                    color: #007bff;
+                    color: var(--primary-color);
                     text-decoration: none;
-                    font-weight: 500;
+                    font-weight: 600;
                     line-height: 1.4;
                     display: block;
+                    font-size: var(--font-size-base);
+                    transition: color 0.2s ease;
                 }
 
                 .announcement-title:hover {
+                    color: var(--accent-color);
                     text-decoration: underline;
                 }
 
                 .announcement-meta {
-                    color: #6c757d;
-                    font-size: 14px;
+                    color: var(--text-secondary);
+                    font-size: var(--font-size-sm);
+                    font-weight: 500;
                 }
 
                 .posted-date {
                     display: flex;
                     align-items: center;
-                    gap: 8px;
+                    gap: var(--spacing-sm);
                 }
 
                 .empty-state {
-                    color: #6c757d;
+                    color: var(--text-secondary);
                     font-style: italic;
                     text-align: center;
-                    padding: 40px 20px;
-                    background: #f8f9fa;
+                    padding: var(--spacing-2xl) var(--spacing-xl);
+                    background: var(--background-primary);
+                    border-radius: var(--radius-md);
+                    border: 2px dashed var(--border-color);
+                    font-size: var(--font-size-base);
+                }
+                
+                /* Responsive design */
+                @media (max-width: 768px) {
+                    .announcements {
+                        padding: var(--spacing-lg);
+                    }
+                    
+                    .announcements h1 {
+                        font-size: var(--font-size-2xl);
+                        margin-bottom: var(--spacing-xl);
+                        flex-direction: column;
+                        text-align: center;
+                        gap: var(--spacing-sm);
+                    }
+                    
+                    .filters {
+                        padding: var(--spacing-lg);
+                        margin-bottom: var(--spacing-xl);
+                    }
+                    
+                    .filter-row {
+                        gap: var(--spacing-sm);
+                    }
+                    
+                    .announcement-card {
+                        padding: var(--spacing-md);
+                    }
+                }
+                
+                @media (max-width: 480px) {
+                    .announcements {
+                        padding: var(--spacing-md);
+                    }
+                    
+                    .filter-row {
+                        flex-direction: column;
+                        align-items: stretch;
+                    }
+                    
+                    .filter-btn,
+                    .course-dropdown-btn {
+                        width: 100%;
+                        justify-content: center;
+                    }
+                    
+                    .course-dropdown {
+                        width: 100%;
+                        max-width: none;
+                    }
                 }
             `}</style>
         </div>

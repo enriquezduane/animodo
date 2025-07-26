@@ -56,61 +56,74 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
                 .sidebar {
                     width: 250px;
                     height: 100vh;
-                    background: #f8f9fa;
-                    border-right: 1px solid #e9ecef;
+                    background: var(--background-secondary);
+                    border-right: 2px solid var(--border-color);
                     display: flex;
                     flex-direction: column;
                     position: fixed;
                     left: 0;
                     top: 0;
                     z-index: 100;
+                    box-shadow: var(--shadow-md);
                 }
                 
                 .sidebar-header {
-                    padding: 20px;
-                    border-bottom: 1px solid #e9ecef;
-                    background: #fff;
+                    padding: var(--spacing-xl);
+                    border-bottom: 2px solid var(--border-color);
+                    background: var(--background-primary);
                 }
                 
                 .sidebar-header h2 {
                     margin: 0;
-                    font-size: 18px;
-                    color: #495057;
+                    font-size: var(--font-size-lg);
+                    color: var(--primary-color);
+                    font-weight: 600;
                 }
                 
                 .sidebar-nav {
                     flex: 1;
-                    padding: 20px 0;
+                    padding: var(--spacing-xl) 0;
                 }
                 
                 .sidebar-item {
                     width: 100%;
-                    padding: 12px 20px;
+                    padding: var(--spacing-md) var(--spacing-xl);
                     border: none;
                     background: none;
                     text-align: left;
                     cursor: pointer;
                     display: flex;
                     align-items: center;
-                    gap: 12px;
-                    font-size: 14px;
-                    color: #6c757d;
+                    gap: var(--spacing-md);
+                    font-size: var(--font-size-sm);
+                    color: var(--text-primary);
                     transition: all 0.2s ease;
+                    font-weight: 500;
                 }
                 
                 .sidebar-item:hover {
-                    background: #e9ecef;
-                    color: #495057;
+                    background: var(--background-primary);
+                    color: var(--primary-color);
+                    transform: translateX(4px);
                 }
                 
                 .sidebar-item.active {
-                    background: #007bff;
-                    color: white;
-                    font-weight: 500;
+                    background: linear-gradient(135deg, var(--accent-color), #8FB61F);
+                    color: var(--dark-gray);
+                    font-weight: 600;
+                    box-shadow: var(--shadow-sm);
+                    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+                    margin-right: var(--spacing-sm);
+                }
+                
+                .sidebar-item.active:hover {
+                    transform: none;
+                    background: linear-gradient(135deg, #8FB61F, var(--accent-color));
                 }
                 
                 .sidebar-icon {
                     font-size: 16px;
+                    flex-shrink: 0;
                 }
                 
                 .sidebar-label {
@@ -118,28 +131,77 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
                 }
                 
                 .sidebar-footer {
-                    padding: 20px;
-                    border-top: 1px solid #e9ecef;
+                    padding: var(--spacing-xl);
+                    border-top: 2px solid var(--border-color);
+                    background: var(--background-primary);
                 }
                 
                 .logout-btn {
                     width: 100%;
-                    padding: 10px;
-                    background: #dc3545;
+                    padding: var(--spacing-md);
+                    background: var(--primary-color);
                     color: white;
                     border: none;
-                    border-radius: 4px;
+                    border-radius: var(--radius-md);
                     cursor: pointer;
-                    font-size: 14px;
+                    font-size: var(--font-size-sm);
+                    font-weight: 600;
                     display: flex;
                     align-items: center;
-                    gap: 8px;
+                    gap: var(--spacing-sm);
                     justify-content: center;
-                    transition: background-color 0.2s ease;
+                    transition: all 0.2s ease;
+                    box-shadow: var(--shadow-sm);
                 }
                 
                 .logout-btn:hover {
-                    background: #c82333;
+                    background: #1E3426;
+                    transform: translateY(-2px);
+                    box-shadow: var(--shadow-md);
+                }
+                
+                .logout-btn:active {
+                    transform: translateY(0);
+                }
+                
+                /* Responsive design */
+                @media (max-width: 768px) {
+                    .sidebar {
+                        width: 200px;
+                    }
+                    
+                    .sidebar-header,
+                    .sidebar-footer {
+                        padding: var(--spacing-lg);
+                    }
+                    
+                    .sidebar-item {
+                        padding: var(--spacing-sm) var(--spacing-lg);
+                        font-size: var(--font-size-xs);
+                    }
+                    
+                    .sidebar-header h2 {
+                        font-size: var(--font-size-base);
+                    }
+                }
+                
+                @media (max-width: 480px) {
+                    .sidebar {
+                        width: 100%;
+                        height: auto;
+                        position: relative;
+                        border-right: none;
+                        border-bottom: 2px solid var(--border-color);
+                    }
+                    
+                    .sidebar-nav {
+                        padding: var(--spacing-md) 0;
+                    }
+                    
+                    .sidebar-item.active {
+                        border-radius: var(--radius-md);
+                        margin-right: 0;
+                    }
                 }
             `}</style>
         </div>
