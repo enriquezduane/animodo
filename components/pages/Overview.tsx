@@ -25,23 +25,16 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
         const now = new Date();
         const dueDate = new Date(dueDateString);
         const timeDiff = dueDate.getTime() - now.getTime();
+        const absoluteDiff = Math.abs(timeDiff);
         
-        if (timeDiff < 0) {
-            const pastDiff = Math.abs(timeDiff);
-            const pastDays = Math.floor(pastDiff / (1000 * 60 * 60 * 24));
-            if (pastDays > 0) return `${pastDays} days overdue`;
-            const pastHours = Math.floor((pastDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            if (pastHours > 0) return `${pastHours} hours overdue`;
-            const pastMinutes = Math.floor((pastDiff % (1000 * 60 * 60)) / (1000 * 60));
-            return `${pastMinutes} minutes overdue`;
-        }
+        const days = Math.floor(absoluteDiff / (1000 * 60 * 60 * 24));
+        if (days > 0) return `${days}d`;
         
-        const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-        if (days > 0) return `${days} days left`;
-        const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        if (hours > 0) return `${hours} hours left`;
-        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-        return `${minutes} minutes left`;
+        const hours = Math.floor((absoluteDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        if (hours > 0) return `${hours}h`;
+        
+        const minutes = Math.floor((absoluteDiff % (1000 * 60 * 60)) / (1000 * 60));
+        return `${minutes}m`;
     };
 
     const getTimeAgo = (postedDateString: string) => {
@@ -124,17 +117,7 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
         return status; // Use the actual status for submitted, graded, etc.
     };
 
-    const getDaysUntilDue = (dueDateString: string | null) => {
-        if (!dueDateString) return null;
-        
-        const now = new Date();
-        const dueDate = new Date(dueDateString);
-        const timeDiff = dueDate.getTime() - now.getTime();
-        const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-        
-        if (daysLeft < 0) return Math.abs(daysLeft);
-        return daysLeft;
-    };
+
 
     return (
         <div className="overview">
@@ -149,7 +132,6 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                             const courseCode = course ? getCourseCode(course.name) : '';
                             const statusLabel = getStatusLabel(assignment);
                             const statusColor = getStatusColor(assignment);
-                            const daysUntilDue = getDaysUntilDue(assignment.due_at);
                             
                             return (
                                 <div key={assignment.id} className="assignment-card">
@@ -158,11 +140,9 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                                             [{courseCode}] {assignment.name}
                                         </a>
                                         <div className="status-container">
-                                            {daysUntilDue !== null && (
+                                            {assignment.due_at && (
                                                 <span className="days-countdown">
-                                                    {daysUntilDue === 0 ? 'Today' : 
-                                                     daysUntilDue < 0 ? `${Math.abs(daysUntilDue)}d over` :
-                                                     `${daysUntilDue}d left`}
+                                                    {getTimeRemaining(assignment.due_at)}
                                                 </span>
                                             )}
                                             <span 
@@ -174,7 +154,7 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                                         </div>
                                     </div>
                                     <div className="assignment-due">
-                                        Due: {formatDate(assignment.due_at)} {assignment.due_at ? `(${getTimeRemaining(assignment.due_at)})` : ''}
+                                        Due: {formatDate(assignment.due_at)}
                                     </div>
                                 </div>
                             );

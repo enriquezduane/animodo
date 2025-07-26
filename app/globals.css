@@ -48,4 +48,203 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+/* Minimal Layout CSS */
+.navbar {
+  border-bottom: 1px solid #e5e5e5;
+  padding: 1rem 0;
+  margin: -2rem -2rem 2rem -2rem;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+}
+
+.nav-logo {
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.nav-links a.active {
+  color: #007bff;
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.landing-container {
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.token-form {
+  margin: 2rem 0;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.access-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.access-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #dc3545;
+  margin-top: 1rem;
+}
+
+.tutorial-link {
+  margin: 1rem 0 2rem 0;
+}
+
+.tutorial-link a {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.marketing-content {
+  text-align: left;
+}
+
+.marketing-content ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+
+.marketing-content li {
+  margin-bottom: 0.5rem;
+}
+
+/* Tutorial Page Styles */
+.tutorial-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.tutorial-content {
+  text-align: left;
+}
+
+.tutorial-content p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.tutorial-image {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.tutorial-image img {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.security-note {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-top: 2rem;
+}
+
+.security-note p {
+  margin: 0;
+  color: #495057;
+}
+
+/* About Page Styles */
+.about-container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.about-content {
+  text-align: left;
+}
+
+.about-section {
+  margin-bottom: 2rem;
+}
+
+.about-section h2 {
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.about-section p {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.qr-toggle-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 1rem 0;
+  transition: background-color 0.2s;
+}
+
+.qr-toggle-btn:hover {
+  background: #218838;
+}
+
+.qr-code-container {
+  text-align: center;
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f8f9fa;
 } 
