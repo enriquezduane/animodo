@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { CourseWithAnnouncements, Course } from '../types';
 
 interface AnnouncementsProps {
@@ -24,9 +24,26 @@ export default function Announcements({
     const [selectAllCourses, setSelectAllCourses] = useState(true);
     const [showCourseDropdown, setShowCourseDropdown] = useState(false);
 
+    // Ref for click outside detection
+    const courseDropdownRef = useRef<HTMLDivElement>(null);
+
+    // Click outside handler
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (courseDropdownRef.current && !courseDropdownRef.current.contains(event.target as Node)) {
+                setShowCourseDropdown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     // Initialize with all courses selected
     useEffect(() => {
-        if (selectAllCourses) {
+        if (selectAllCourses && courses.length > 0) {
             setSelectedCourses(new Set(courses.map(c => c.id)));
         }
     }, [courses, selectAllCourses]);
@@ -37,15 +54,22 @@ export default function Announcements({
         const savedSelectAll = localStorage.getItem('announcement_select_all_courses');
         
         if (savedCourses && savedSelectAll === 'false') {
-            setSelectedCourses(new Set(JSON.parse(savedCourses)));
-            setSelectAllCourses(false);
+            try {
+                setSelectedCourses(new Set(JSON.parse(savedCourses)));
+                setSelectAllCourses(false);
+            } catch (e) {
+                console.warn('Failed to parse saved announcement course selections');
+            }
         }
     }, []);
 
-    // Save preferences to localStorage
+    // Save preferences to localStorage (debounced)
     useEffect(() => {
-        localStorage.setItem('announcement_selected_courses', JSON.stringify([...selectedCourses]));
-        localStorage.setItem('announcement_select_all_courses', selectAllCourses.toString());
+        const timeoutId = setTimeout(() => {
+            localStorage.setItem('announcement_selected_courses', JSON.stringify([...selectedCourses]));
+            localStorage.setItem('announcement_select_all_courses', selectAllCourses.toString());
+        }, 300);
+        return () => clearTimeout(timeoutId);
     }, [selectedCourses, selectAllCourses]);
 
     const getCourseCode = (courseName: string) => {
@@ -87,22 +111,28 @@ export default function Announcements({
     };
 
     const toggleCourseFilter = (courseId: number) => {
-        const newCourses = new Set(selectedCourses);
-        if (newCourses.has(courseId)) {
-            newCourses.delete(courseId);
-        } else {
-            newCourses.add(courseId);
-        }
-        setSelectedCourses(newCourses);
+        setSelectedCourses(prevCourses => {
+            const newCourses = new Set(prevCourses);
+            if (newCourses.has(courseId)) {
+                newCourses.delete(courseId);
+            } else {
+                newCourses.add(courseId);
+            }
+            return newCourses;
+        });
         setSelectAllCourses(false);
     };
 
     const handleSelectAllCourses = () => {
         if (selectAllCourses) {
-            return;
+            // Deselect all
+            setSelectAllCourses(false);
+            setSelectedCourses(new Set());
+        } else {
+            // Select all
+            setSelectAllCourses(true);
+            setSelectedCourses(new Set(courses.map(c => c.id)));
         }
-        setSelectAllCourses(true);
-        setSelectedCourses(new Set(courses.map(c => c.id)));
     };
 
     // Create flat list of all announcements with course info
@@ -144,29 +174,45 @@ export default function Announcements({
                         {showOldAnnouncements ? '✓ Showing old announcements' : 'Show old announcements'}
                     </button>
                     
-                    <div className="course-filter">
+                    <div className="course-filter" ref={courseDropdownRef}>
                         <button 
-                            onClick={() => setShowCourseDropdown(!showCourseDropdown)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowCourseDropdown(!showCourseDropdown);
+                            }}
                             className="course-dropdown-btn"
                         >
                             Courses ({selectedCourses.size} selected) ▼
                         </button>
                         {showCourseDropdown && (
                             <div className="course-dropdown">
-                                <label className="select-all-course-label">
+                                <label 
+                                    className="select-all-course-label"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
                                     <input
                                         type="checkbox"
                                         checked={selectAllCourses}
-                                        onChange={handleSelectAllCourses}
+                                        onChange={(e) => {
+                                            e.stopPropagation();
+                                            handleSelectAllCourses();
+                                        }}
                                     />
                                     Select All
                                 </label>
                                 {courses.map(course => (
-                                    <label key={course.id} className="course-option">
+                                    <label 
+                                        key={course.id} 
+                                        className="course-option"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
                                         <input
                                             type="checkbox"
                                             checked={selectedCourses.has(course.id)}
-                                            onChange={() => toggleCourseFilter(course.id)}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+                                                toggleCourseFilter(course.id);
+                                            }}
                                         />
                                         {course.name}
                                     </label>
