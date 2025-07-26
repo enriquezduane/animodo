@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Assignment, CourseWithAssignments, Course } from '../types';
+import { LuClipboardList } from 'react-icons/lu';
 
 interface AssignmentsProps {
     coursesWithAssignments: CourseWithAssignments[];
@@ -344,7 +345,7 @@ export default function Assignments({
 
     return (
         <div className="assignments">
-            <h1>📝 All Assignments</h1>
+            <h1><LuClipboardList size={24} /> All Assignments</h1>
             
             <div className="filters">
                 <div className="filter-row">

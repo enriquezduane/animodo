@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { LuLayoutDashboard, LuClipboardList, LuMegaphone, LuLogOut } from 'react-icons/lu';
 
 interface SidebarProps {
     userName: string | null;
@@ -21,9 +22,9 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
     };
 
     const sidebarItems = [
-        { id: 'overview', label: 'Overview', icon: '📊' },
-        { id: 'assignments', label: 'Assignments', icon: '📝' },
-        { id: 'announcements', label: 'Announcements', icon: '📢' }
+        { id: 'overview', label: 'Overview', icon: <LuLayoutDashboard size={16} /> },
+        { id: 'assignments', label: 'Assignments', icon: <LuClipboardList size={16} /> },
+        { id: 'announcements', label: 'Announcements', icon: <LuMegaphone size={16} /> }
     ];
 
     return (
@@ -47,7 +48,7 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
             
             <div className="sidebar-footer">
                 <button onClick={onLogout} className="logout-btn">
-                    🚪 Logout
+                    <LuLogOut size={16} /> Logout
                 </button>
             </div>
             

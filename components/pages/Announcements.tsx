@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { CourseWithAnnouncements, Course } from '../types';
+import { LuMegaphone } from 'react-icons/lu';
 
 interface AnnouncementsProps {
     coursesWithAnnouncements: CourseWithAnnouncements[];
@@ -163,7 +164,7 @@ export default function Announcements({
 
     return (
         <div className="announcements">
-            <h1>📢 All Announcements</h1>
+            <h1><LuMegaphone size={24} /> All Announcements</h1>
             
             <div className="filters">
                 <div className="filter-row">
