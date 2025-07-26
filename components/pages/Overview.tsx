@@ -1,7 +1,8 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Assignment, Announcement, Course } from '../types';
-import { LuAlarmClock, LuMegaphone } from 'react-icons/lu';
+import { LuAlarmClock, LuMegaphone, LuEyeOff, LuEye } from 'react-icons/lu';
 
 interface OverviewProps {
     courses: Course[];
@@ -10,6 +11,45 @@ interface OverviewProps {
 }
 
 export default function Overview({ courses, urgentAssignments, recentAnnouncements }: OverviewProps) {
+    const [ignoredAssignments, setIgnoredAssignments] = useState<Set<number>>(new Set());
+
+    // Load ignored assignments from localStorage
+    useEffect(() => {
+        const savedIgnored = localStorage.getItem('ignored_assignments');
+        if (savedIgnored) {
+            try {
+                setIgnoredAssignments(new Set(JSON.parse(savedIgnored)));
+            } catch (e) {
+                console.warn('Failed to parse saved ignored assignments');
+            }
+        }
+    }, []);
+
+    // Save ignored assignments to localStorage
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            localStorage.setItem('ignored_assignments', JSON.stringify([...ignoredAssignments]));
+        }, 300);
+        return () => clearTimeout(timeoutId);
+    }, [ignoredAssignments]);
+
+    const toggleIgnoreAssignment = (assignmentId: number) => {
+        setIgnoredAssignments(prevIgnored => {
+            const newIgnored = new Set(prevIgnored);
+            if (newIgnored.has(assignmentId)) {
+                newIgnored.delete(assignmentId);
+            } else {
+                newIgnored.add(assignmentId);
+            }
+            return newIgnored;
+        });
+    };
+
+    // Filter out ignored assignments and take the first 5 non-ignored ones
+    const filteredUrgentAssignments = urgentAssignments
+        .filter(assignment => !ignoredAssignments.has(assignment.id))
+        .slice(0, 5);
+
     const getCourseCode = (courseName: string) => {
         const match = courseName.match(/^([A-Z]+\d+)/);
         return match ? match[1] : courseName.split(' ')[0];
@@ -44,11 +84,11 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
         const timeDiff = now.getTime() - postedDate.getTime();
         
         const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-        if (days > 0) return `${days} days ago`;
+        if (days > 0) return `${days} ${days === 1 ? 'day' : 'days'} ago`;
         const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        if (hours > 0) return `${hours} hours ago`;
+        if (hours > 0) return `${hours} ${hours === 1 ? 'hour' : 'hours'} ago`;
         const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-        return `${minutes} minutes ago`;
+        return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'} ago`;
     };
 
     const getSubmissionStatus = (assignment: Assignment) => {
@@ -99,8 +139,9 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
         return '#6c757d'; // Default gray
     };
 
-    const getStatusLabel = (assignment: Assignment) => {
+    const getCombinedStatusLabel = (assignment: Assignment) => {
         const status = getSubmissionStatus(assignment);
+        const timeRemaining = getTimeRemaining(assignment.due_at);
         
         if (status === 'Unsubmitted') {
             if (!assignment.due_at) return 'Low Priority';
@@ -110,14 +151,37 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
             const timeDiff = dueDate.getTime() - now.getTime();
             const hoursLeft = timeDiff / (1000 * 60 * 60);
             
-            if (timeDiff < 0) return 'Overdue!';
-            if (hoursLeft < 24) return 'Almost Due';
-            return 'Due Soon';
+            if (timeDiff < 0) {
+                // Overdue
+                const overdueDays = Math.floor(Math.abs(timeDiff) / (1000 * 60 * 60 * 24));
+                const overdueHours = Math.floor((Math.abs(timeDiff) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                
+                if (overdueDays > 0) {
+                    return `OVERDUE (by ${overdueDays}${overdueDays === 1 ? ' day' : ' days'})!`;
+                } else if (overdueHours > 0) {
+                    return `OVERDUE (by ${overdueHours}${overdueHours === 1 ? ' hr' : ' hrs'})!`;
+                } else {
+                    const overdueMinutes = Math.floor((Math.abs(timeDiff) % (1000 * 60 * 60)) / (1000 * 60));
+                    return `OVERDUE (by ${overdueMinutes}${overdueMinutes === 1 ? ' min' : ' mins'})!`;
+                }
+            }
+            
+            if (hoursLeft < 24) {
+                const hours = Math.floor(hoursLeft);
+                const minutes = Math.floor((hoursLeft % 1) * 60);
+                if (hours > 0) {
+                    return `ALMOST DUE (due in ${hours}${hours === 1 ? ' hr' : ' hrs'})`;
+                } else {
+                    return `ALMOST DUE (due in ${minutes}${minutes === 1 ? ' min' : ' mins'})`;
+                }
+            }
+            
+            const days = Math.floor(hoursLeft / 24);
+            return `DUE SOON (due in ${days}${days === 1 ? ' day' : ' days'})`;
         }
         
         return status; // Use the actual status for submitted, graded, etc.
     };
-
 
 
     return (
@@ -126,12 +190,12 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
             
             <div className="overview-section">
                 <h2><LuAlarmClock size={20} /> Urgent Assignments</h2>
-                {urgentAssignments.length > 0 ? (
+                {filteredUrgentAssignments.length > 0 ? (
                     <div className="assignment-list">
-                        {urgentAssignments.map(assignment => {
+                        {filteredUrgentAssignments.map(assignment => {
                             const course = courses.find(c => c.id === assignment.courseId);
                             const courseCode = course ? getCourseCode(course.name) : '';
-                            const statusLabel = getStatusLabel(assignment);
+                            const statusLabel = getCombinedStatusLabel(assignment);
                             const statusColor = getStatusColor(assignment);
                             
                             return (
@@ -141,17 +205,22 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                                             [{courseCode}] {assignment.name}
                                         </a>
                                         <div className="status-container">
-                                            {assignment.due_at && (
-                                                <span className="days-countdown">
-                                                    {getTimeRemaining(assignment.due_at)}
-                                                </span>
-                                            )}
                                             <span 
                                                 className="status-badge" 
                                                 style={{ backgroundColor: statusColor }}
                                             >
                                                 {statusLabel}
                                             </span>
+                                            <button
+                                                onClick={() => toggleIgnoreAssignment(assignment.id)}
+                                                className={`ignore-btn ${ignoredAssignments.has(assignment.id) ? 'ignored' : ''}`}
+                                                title={ignoredAssignments.has(assignment.id) ? 'Unignore assignment' : 'Ignore assignment'}
+                                            >
+                                                {ignoredAssignments.has(assignment.id) ? 
+                                                    <LuEye size={14} /> : 
+                                                    <LuEyeOff size={14} />
+                                                }
+                                            </button>
                                         </div>
                                     </div>
                                     <div className="assignment-due">
@@ -299,6 +368,41 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                     box-shadow: var(--shadow-sm);
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
+                }
+
+                .ignore-btn {
+                    padding: var(--spacing-xs);
+                    border: 2px solid var(--border-color);
+                    background: var(--background-primary);
+                    border-radius: var(--radius-sm);
+                    cursor: pointer;
+                    color: var(--text-primary);
+                    transition: all 0.2s ease;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    min-width: 28px;
+                    height: 28px;
+                }
+
+                .ignore-btn:hover {
+                    border-color: var(--accent-color);
+                    color: var(--primary-color);
+                    transform: scale(1.1);
+                    box-shadow: var(--shadow-sm);
+                }
+
+                .ignore-btn.ignored {
+                    border-color: var(--error-color);
+                    color: var(--error-color);
+                    background: rgba(239, 68, 68, 0.1);
+                }
+
+                .ignore-btn.ignored:hover {
+                    border-color: #DC2626;
+                    color: #DC2626;
+                    background: rgba(239, 68, 68, 0.2);
+                    transform: scale(1.1);
                 }
 
                 .assignment-due, .announcement-meta {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Assignment, CourseWithAssignments, Course } from '../types';
-import { LuClipboardList } from 'react-icons/lu';
+import { LuClipboardList, LuEyeOff, LuEye } from 'react-icons/lu';
 
 interface AssignmentsProps {
     coursesWithAssignments: CourseWithAssignments[];
@@ -189,6 +189,56 @@ export default function Assignments({
         return '#6c757d';
     };
 
+    const getCombinedStatusLabel = (assignment: Assignment) => {
+        const status = getSubmissionStatus(assignment);
+        
+        if (status === 'unsubmitted') {
+            if (!assignment.due_at) return 'Low Priority';
+            
+            const now = new Date();
+            const dueDate = new Date(assignment.due_at);
+            const timeDiff = dueDate.getTime() - now.getTime();
+            const hoursLeft = timeDiff / (1000 * 60 * 60);
+            
+            if (timeDiff < 0) {
+                // Overdue
+                const overdueDays = Math.floor(Math.abs(timeDiff) / (1000 * 60 * 60 * 24));
+                const overdueHours = Math.floor((Math.abs(timeDiff) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                
+                if (overdueDays > 0) {
+                    return `OVERDUE (by ${overdueDays}${overdueDays === 1 ? ' day' : ' days'})!`;
+                } else if (overdueHours > 0) {
+                    return `OVERDUE (by ${overdueHours}${overdueHours === 1 ? ' hr' : ' hrs'})!`;
+                } else {
+                    const overdueMinutes = Math.floor((Math.abs(timeDiff) % (1000 * 60 * 60)) / (1000 * 60));
+                    return `OVERDUE (by ${overdueMinutes}${overdueMinutes === 1 ? ' min' : ' mins'})!`;
+                }
+            }
+            
+            if (hoursLeft < 24) {
+                const hours = Math.floor(hoursLeft);
+                const minutes = Math.floor((hoursLeft % 1) * 60);
+                if (hours > 0) {
+                    return `ALMOST DUE (due in ${hours}${hours === 1 ? ' hr' : ' hrs'})`;
+                } else {
+                    return `ALMOST DUE (due in ${minutes}${minutes === 1 ? ' min' : ' mins'})`;
+                }
+            }
+            
+            const days = Math.floor(hoursLeft / 24);
+            return `DUE SOON (due in ${days}${days === 1 ? ' day' : ' days'})`;
+        }
+        
+        const statusLabels = {
+            'submitted': 'Submitted',
+            'pending_review': 'Pending Review',
+            'graded': 'Graded',
+            'group_submitted': 'Group Submitted'
+        };
+        
+        return statusLabels[status] || status;
+    };
+
     const getStatusLabel = (assignment: Assignment) => {
         const status = getSubmissionStatus(assignment);
         
@@ -290,21 +340,28 @@ export default function Assignments({
     // Filter and sort assignments
     const filteredAssignments = allAssignments
         .filter(assignment => {
-            // Check for exclusive filters first
+            // Always apply status filter first
+            const status = getSubmissionStatus(assignment);
+            if (!selectedStatuses.has(status)) return false;
+            
+            // Always apply course filter
+            if (!selectedCourses.has(assignment.courseId)) return false;
+            
+            // Now apply exclusive filters
             const now = new Date();
             const maxDaysOverdue = 10;
             
-            // If "Show ignored" is active, show ONLY ignored assignments
+            // If "Show ignored" is active, show ONLY ignored assignments (but still respecting status/course filters)
             if (showIgnored) {
                 return ignoredAssignments.has(assignment.id);
             }
             
-            // If "Show no due dates" is active, show ONLY assignments with no due dates
+            // If "Show no due dates" is active, show ONLY assignments with no due dates (but still respecting status/course filters)
             if (showNoDueDates) {
                 return !assignment.due_at;
             }
             
-            // If "Show > 10 days overdue" is active, show ONLY assignments > 10 days overdue
+            // If "Show > 10 days overdue" is active, show ONLY assignments > 10 days overdue (but still respecting status/course filters)
             if (showOverdueAssignments) {
                 if (!assignment.due_at) return false;
                 const dueDate = new Date(assignment.due_at);
@@ -313,13 +370,6 @@ export default function Assignments({
             }
             
             // Normal filtering when no exclusive filters are active
-            // Apply status filter
-            const status = getSubmissionStatus(assignment);
-            if (!selectedStatuses.has(status)) return false;
-            
-            // Apply course filter
-            if (!selectedCourses.has(assignment.courseId)) return false;
-            
             // Exclude ignored assignments (unless showing ignored)
             if (ignoredAssignments.has(assignment.id)) return false;
             
@@ -476,16 +526,14 @@ export default function Assignments({
                                         {assignment.name}
                                     </a>
                                     <div className="status-container">
-                                        {assignment.due_at && (
-                                            <span className="days-countdown">
-                                                {getTimeRemaining(assignment.due_at)}
-                                            </span>
-                                        )}
+                                        <span className="course-name">
+                                            {getCourseCode(assignment.courseName)}
+                                        </span>
                                         <span 
                                             className="status-badge"
                                             style={{ backgroundColor: statusColor }}
                                         >
-                                            {statusLabel}
+                                            {getCombinedStatusLabel(assignment)}
                                         </span>
                                     </div>
                                 </div>
@@ -498,7 +546,14 @@ export default function Assignments({
                                         className={`ignore-btn ${ignoredAssignments.has(assignment.id) ? 'ignored' : ''}`}
                                         title={ignoredAssignments.has(assignment.id) ? 'Unignore assignment' : 'Ignore assignment'}
                                     >
-                                        {ignoredAssignments.has(assignment.id) ? '👁️ Unignore' : '🙈 Ignore'}
+                                        {ignoredAssignments.has(assignment.id) ? 
+                                            <>
+                                                <LuEye size={12} /> Unignore
+                                            </> : 
+                                            <>
+                                                <LuEyeOff size={12} /> Ignore
+                                            </>
+                                        }
                                     </button>
                                 </div>
                             </div>
@@ -802,16 +857,6 @@ export default function Assignments({
                     border: 1px solid var(--border-color);
                 }
 
-                .days-countdown {
-                    font-weight: 600;
-                    color: var(--dark-gray);
-                    font-size: var(--font-size-sm);
-                    background: linear-gradient(135deg, var(--accent-color), #8FB61F);
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--radius-lg);
-                    box-shadow: var(--shadow-sm);
-                }
-
                 .status-badge {
                     color: white;
                     padding: var(--spacing-xs) var(--spacing-sm);
@@ -822,6 +867,7 @@ export default function Assignments({
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
                     box-shadow: var(--shadow-sm);
+                    flex-shrink: 0;
                 }
 
                 .assignment-meta {
