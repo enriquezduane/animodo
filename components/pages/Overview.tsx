@@ -1,6 +1,7 @@
 'use client';
 
 import { Assignment, Announcement, Course } from '../types';
+import { LuAlarmClock, LuMegaphone } from 'react-icons/lu';
 
 interface OverviewProps {
     courses: Course[];
@@ -124,7 +125,7 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
             <h1>Overview</h1>
             
             <div className="overview-section">
-                <h2>🚨 Urgent Assignments</h2>
+                <h2><LuAlarmClock size={20} /> Urgent Assignments</h2>
                 {urgentAssignments.length > 0 ? (
                     <div className="assignment-list">
                         {urgentAssignments.map(assignment => {
@@ -166,7 +167,7 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
             </div>
 
             <div className="overview-section">
-                <h2>📢 Recent Announcements</h2>
+                <h2><LuMegaphone size={20} /> Recent Announcements</h2>
                 {recentAnnouncements.length > 0 ? (
                     <div className="announcement-list">
                         {recentAnnouncements.map(announcement => {
