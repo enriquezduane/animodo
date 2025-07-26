@@ -192,104 +192,182 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
 
             <style jsx>{`
                 .overview {
-                    padding: 20px;
+                    padding: var(--spacing-xl);
+                    background: var(--background-primary);
+                    min-height: 100vh;
                 }
                 
                 .overview h1 {
-                    margin: 0 0 30px 0;
-                    color: #212529;
-                    font-size: 28px;
+                    margin: 0 0 var(--spacing-2xl) 0;
+                    color: var(--primary-color);
+                    font-size: var(--font-size-3xl);
+                    font-weight: 700;
+                    display: flex;
+                    align-items: center;
+                    gap: var(--spacing-md);
                 }
 
                 .overview-section {
-                    margin-bottom: 40px;
+                    margin-bottom: var(--spacing-2xl);
+                    background: var(--background-secondary);
+                    border-radius: var(--radius-lg);
+                    padding: var(--spacing-xl);
+                    box-shadow: var(--shadow-md);
+                    border: 1px solid var(--border-color);
                 }
 
                 .overview-section h2 {
-                    margin: 0 0 20px 0;
-                    color: #495057;
-                    font-size: 20px;
+                    margin: 0 0 var(--spacing-lg) 0;
+                    color: var(--primary-color);
+                    font-size: var(--font-size-xl);
+                    font-weight: 600;
                     display: flex;
                     align-items: center;
-                    gap: 8px;
+                    gap: var(--spacing-sm);
+                    padding-bottom: var(--spacing-md);
+                    border-bottom: 2px solid var(--border-color);
                 }
 
                 .assignment-list, .announcement-list {
                     display: flex;
                     flex-direction: column;
-                    gap: 12px;
+                    gap: var(--spacing-md);
                 }
 
                 .assignment-card, .announcement-card {
-                    background: white;
-                    border: 1px solid #e9ecef;
-                    border-radius: 8px;
-                    padding: 16px;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-                    transition: box-shadow 0.2s ease;
+                    background: var(--background-primary);
+                    border: 2px solid var(--border-color);
+                    border-radius: var(--radius-md);
+                    padding: var(--spacing-lg);
+                    box-shadow: var(--shadow-sm);
+                    transition: all 0.2s ease;
                 }
 
                 .assignment-card:hover, .announcement-card:hover {
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                    box-shadow: var(--shadow-md);
+                    transform: translateY(-2px);
+                    border-color: var(--accent-color);
                 }
 
                 .assignment-header {
                     display: flex;
                     justify-content: space-between;
                     align-items: flex-start;
-                    gap: 12px;
-                    margin-bottom: 8px;
+                    gap: var(--spacing-md);
+                    margin-bottom: var(--spacing-sm);
                 }
 
                 .status-container {
                     display: flex;
                     align-items: center;
-                    gap: 8px;
+                    gap: var(--spacing-sm);
                     flex-shrink: 0;
                 }
 
                 .days-countdown {
-                    background: #f8f9fa;
-                    color: #495057;
-                    padding: 2px 6px;
-                    border-radius: 8px;
-                    font-size: 11px;
-                    font-weight: 600;
+                    background: linear-gradient(135deg, var(--accent-color), #8FB61F);
+                    color: var(--dark-gray);
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: var(--radius-lg);
+                    font-size: var(--font-size-xs);
+                    font-weight: 700;
                     white-space: nowrap;
+                    box-shadow: var(--shadow-sm);
                 }
 
                 .assignment-title, .announcement-title {
-                    color: #007bff;
+                    color: var(--primary-color);
                     text-decoration: none;
-                    font-weight: 500;
+                    font-weight: 600;
                     flex: 1;
+                    font-size: var(--font-size-base);
+                    transition: color 0.2s ease;
                 }
 
                 .assignment-title:hover, .announcement-title:hover {
+                    color: var(--accent-color);
                     text-decoration: underline;
                 }
 
                 .status-badge {
                     color: white;
-                    padding: 4px 8px;
-                    border-radius: 12px;
-                    font-size: 12px;
-                    font-weight: 500;
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: var(--radius-lg);
+                    font-size: var(--font-size-xs);
+                    font-weight: 600;
                     white-space: nowrap;
+                    box-shadow: var(--shadow-sm);
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
                 }
 
                 .assignment-due, .announcement-meta {
-                    color: #6c757d;
-                    font-size: 14px;
+                    color: var(--text-secondary);
+                    font-size: var(--font-size-sm);
+                    font-weight: 500;
+                    margin-top: var(--spacing-xs);
                 }
 
                 .empty-state {
-                    color: #6c757d;
+                    color: var(--text-secondary);
                     font-style: italic;
                     text-align: center;
-                    padding: 40px 20px;
-                    background: #f8f9fa;
-                    border-radius: 8px;
+                    padding: var(--spacing-2xl) var(--spacing-xl);
+                    background: var(--background-primary);
+                    border-radius: var(--radius-md);
+                    border: 2px dashed var(--border-color);
+                    font-size: var(--font-size-base);
+                }
+                
+                /* Responsive design */
+                @media (max-width: 768px) {
+                    .overview {
+                        padding: var(--spacing-lg);
+                    }
+                    
+                    .overview h1 {
+                        font-size: var(--font-size-2xl);
+                        margin-bottom: var(--spacing-xl);
+                    }
+                    
+                    .overview-section {
+                        padding: var(--spacing-lg);
+                        margin-bottom: var(--spacing-xl);
+                    }
+                    
+                    .assignment-header {
+                        flex-direction: column;
+                        align-items: stretch;
+                        gap: var(--spacing-sm);
+                    }
+                    
+                    .status-container {
+                        justify-content: flex-start;
+                    }
+                    
+                    .assignment-card, .announcement-card {
+                        padding: var(--spacing-md);
+                    }
+                }
+                
+                @media (max-width: 480px) {
+                    .overview {
+                        padding: var(--spacing-md);
+                    }
+                    
+                    .overview h1 {
+                        font-size: var(--font-size-xl);
+                        flex-direction: column;
+                        text-align: center;
+                        gap: var(--spacing-sm);
+                    }
+                    
+                    .overview-section h2 {
+                        font-size: var(--font-size-lg);
+                        flex-direction: column;
+                        text-align: center;
+                        gap: var(--spacing-xs);
+                    }
                 }
             `}</style>
         </div>
