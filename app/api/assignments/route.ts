@@ -36,6 +36,7 @@ export async function GET(request: Request) {
             html_url: assignment.html_url,
             points_possible: assignment.points_possible,
             assignment_group_id: assignment.assignment_group_id,
+            has_submitted_submissions: assignment.has_submitted_submissions || false,
             submission: assignment.submission ? {
                 workflow_state: assignment.submission.workflow_state,
                 score: assignment.submission.score
