@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 type Course = {
     id: number;
@@ -34,52 +35,91 @@ export default function DashboardClient() {
     const [assignments, setAssignments] = useState<Record<number, Assignment[]>>({});
     const [announcements, setAnnouncements] = useState<Record<number, Announcement[]>>({});
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
+    const router = useRouter();
 
     useEffect(() => {
         async function fetchData() {
-            // Fetch user name
-            const userRes = await fetch('/api/user');
-            const userData = await userRes.json();
-            setUserName(userData.name);
-
-            // Fetch courses
-            const coursesRes = await fetch('/api/courses');
-            const coursesData: Course[] = await coursesRes.json();
-            setCourses(coursesData);
-
-            // Fetch assignments and announcements
-            const courseIds = coursesData.map(c => c.id);
-            const assignmentsMap: Record<number, Assignment[]> = {};
-            const announcementsMap: Record<number, Announcement[]> = {};
-
-            // Fetch assignments for each course
-            const assignmentPromises = coursesData.map(async (course) => {
-                const assignRes = await fetch(`/api/assignments?courseId=${course.id}`);
-                const assignData: Assignment[] = await assignRes.json();
-                assignmentsMap[course.id] = assignData;
-            });
-
-            await Promise.all(assignmentPromises);
-
-            // Fetch all announcements
-            const annParams = courseIds.map(id => `courseIds=${id}`).join('&');
-            const annRes = await fetch(`/api/announcements?${annParams}`);
-            const annData: Announcement[] = await annRes.json();
-
-            // Group announcements by course using context_code
-            for (const ann of annData) {
-                const courseId = parseInt(ann.context_code.replace('course_', ''));
-                if (!announcementsMap[courseId]) announcementsMap[courseId] = [];
-                announcementsMap[courseId].push(ann);
+            const token = localStorage.getItem('canvas_token');
+            if (!token) {
+                router.push('/');
+                return;
             }
 
-            setAssignments(assignmentsMap);
-            setAnnouncements(announcementsMap);
-            setLoading(false);
+            const headers = {
+                'Authorization': `Bearer ${token}`,
+                'Canvas-URL': 'https://dlsu.instructure.com'
+            };
+
+            try {
+                // Fetch user name
+                const userRes = await fetch('/api/user', { headers });
+                if (!userRes.ok) {
+                    if (userRes.status === 401) {
+                        localStorage.removeItem('canvas_token');
+                        router.push('/');
+                        return;
+                    }
+                    throw new Error('Failed to fetch user data');
+                }
+                const userData = await userRes.json();
+                setUserName(userData.name);
+
+                // Fetch courses
+                const coursesRes = await fetch('/api/courses', { headers });
+                if (!coursesRes.ok) {
+                    throw new Error('Failed to fetch courses');
+                }
+                const coursesData: Course[] = await coursesRes.json();
+                setCourses(coursesData);
+
+                // Fetch assignments and announcements
+                const courseIds = coursesData.map(c => c.id);
+                const assignmentsMap: Record<number, Assignment[]> = {};
+                const announcementsMap: Record<number, Announcement[]> = {};
+
+                // Fetch assignments for each course
+                const assignmentPromises = coursesData.map(async (course) => {
+                    const assignRes = await fetch(`/api/assignments?courseId=${course.id}`, { headers });
+                    if (assignRes.ok) {
+                        const assignData: Assignment[] = await assignRes.json();
+                        assignmentsMap[course.id] = assignData;
+                    }
+                });
+
+                await Promise.all(assignmentPromises);
+
+                // Fetch all announcements
+                const annParams = courseIds.map(id => `courseIds=${id}`).join('&');
+                const annRes = await fetch(`/api/announcements?${annParams}`, { headers });
+                if (annRes.ok) {
+                    const annData: Announcement[] = await annRes.json();
+
+                    // Group announcements by course using context_code
+                    for (const ann of annData) {
+                        const courseId = parseInt(ann.context_code.replace('course_', ''));
+                        if (!announcementsMap[courseId]) announcementsMap[courseId] = [];
+                        announcementsMap[courseId].push(ann);
+                    }
+                }
+
+                setAssignments(assignmentsMap);
+                setAnnouncements(announcementsMap);
+            } catch (err) {
+                setError('Failed to load dashboard data');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
         }
 
         fetchData();
-    }, []);
+    }, [router]);
+
+    const handleLogout = () => {
+        localStorage.removeItem('canvas_token');
+        router.push('/');
+    };
 
     const formatDate = (dateString: string | null) => {
         if (!dateString) return 'No due date';
@@ -141,10 +181,14 @@ export default function DashboardClient() {
     };
 
     if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
     return (
         <div>
-            <h1>Welcome, {userName}</h1>
+            <div>
+                <h1>Welcome, {userName}</h1>
+                <button onClick={handleLogout}>Logout</button>
+            </div>
 
             {courses.map(course => (
                 <div key={course.id}>
