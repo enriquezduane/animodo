@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Assignment, CourseWithAssignments, Course } from '../types';
 
 interface AssignmentsProps {
@@ -34,9 +34,30 @@ export default function Assignments({
     const [showCourseDropdown, setShowCourseDropdown] = useState(false);
     const [showIgnored, setShowIgnored] = useState(false);
 
+    // Refs for click outside detection
+    const statusDropdownRef = useRef<HTMLDivElement>(null);
+    const courseDropdownRef = useRef<HTMLDivElement>(null);
+
+    // Click outside handler
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target as Node)) {
+                setShowStatusDropdown(false);
+            }
+            if (courseDropdownRef.current && !courseDropdownRef.current.contains(event.target as Node)) {
+                setShowCourseDropdown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     // Initialize with all courses selected
     useEffect(() => {
-        if (selectAllCourses) {
+        if (selectAllCourses && courses.length > 0) {
             setSelectedCourses(new Set(courses.map(c => c.id)));
         }
     }, [courses, selectAllCourses]);
@@ -49,29 +70,50 @@ export default function Assignments({
         const savedSelectAll = localStorage.getItem('select_all_courses');
         
         if (savedStatuses) {
-            setSelectedStatuses(new Set(JSON.parse(savedStatuses)));
+            try {
+                setSelectedStatuses(new Set(JSON.parse(savedStatuses)));
+            } catch (e) {
+                console.warn('Failed to parse saved status filters');
+            }
         }
         if (savedIgnored) {
-            setIgnoredAssignments(new Set(JSON.parse(savedIgnored)));
+            try {
+                setIgnoredAssignments(new Set(JSON.parse(savedIgnored)));
+            } catch (e) {
+                console.warn('Failed to parse saved ignored assignments');
+            }
         }
         if (savedCourses && savedSelectAll === 'false') {
-            setSelectedCourses(new Set(JSON.parse(savedCourses)));
-            setSelectAllCourses(false);
+            try {
+                setSelectedCourses(new Set(JSON.parse(savedCourses)));
+                setSelectAllCourses(false);
+            } catch (e) {
+                console.warn('Failed to parse saved course selections');
+            }
         }
     }, []);
 
-    // Save preferences to localStorage
+    // Save preferences to localStorage (debounced)
     useEffect(() => {
-        localStorage.setItem('assignment_status_filters', JSON.stringify([...selectedStatuses]));
+        const timeoutId = setTimeout(() => {
+            localStorage.setItem('assignment_status_filters', JSON.stringify([...selectedStatuses]));
+        }, 300);
+        return () => clearTimeout(timeoutId);
     }, [selectedStatuses]);
 
     useEffect(() => {
-        localStorage.setItem('ignored_assignments', JSON.stringify([...ignoredAssignments]));
+        const timeoutId = setTimeout(() => {
+            localStorage.setItem('ignored_assignments', JSON.stringify([...ignoredAssignments]));
+        }, 300);
+        return () => clearTimeout(timeoutId);
     }, [ignoredAssignments]);
 
     useEffect(() => {
-        localStorage.setItem('selected_courses', JSON.stringify([...selectedCourses]));
-        localStorage.setItem('select_all_courses', selectAllCourses.toString());
+        const timeoutId = setTimeout(() => {
+            localStorage.setItem('selected_courses', JSON.stringify([...selectedCourses]));
+            localStorage.setItem('select_all_courses', selectAllCourses.toString());
+        }, 300);
+        return () => clearTimeout(timeoutId);
     }, [selectedCourses, selectAllCourses]);
 
     const getCourseCode = (courseName: string) => {
@@ -175,43 +217,52 @@ export default function Assignments({
 
 
     const toggleStatusFilter = (status: StatusFilter) => {
-        const newStatuses = new Set(selectedStatuses);
-        if (newStatuses.has(status)) {
-            newStatuses.delete(status);
-        } else {
-            newStatuses.add(status);
-        }
-        setSelectedStatuses(newStatuses);
+        setSelectedStatuses(prevStatuses => {
+            const newStatuses = new Set(prevStatuses);
+            if (newStatuses.has(status)) {
+                newStatuses.delete(status);
+            } else {
+                newStatuses.add(status);
+            }
+            return newStatuses;
+        });
     };
 
     const toggleCourseFilter = (courseId: number) => {
-        const newCourses = new Set(selectedCourses);
-        if (newCourses.has(courseId)) {
-            newCourses.delete(courseId);
-        } else {
-            newCourses.add(courseId);
-        }
-        setSelectedCourses(newCourses);
+        setSelectedCourses(prevCourses => {
+            const newCourses = new Set(prevCourses);
+            if (newCourses.has(courseId)) {
+                newCourses.delete(courseId);
+            } else {
+                newCourses.add(courseId);
+            }
+            return newCourses;
+        });
         setSelectAllCourses(false);
     };
 
     const handleSelectAllCourses = () => {
         if (selectAllCourses) {
-            // Already selected all, do nothing
-            return;
+            // Deselect all
+            setSelectAllCourses(false);
+            setSelectedCourses(new Set());
+        } else {
+            // Select all
+            setSelectAllCourses(true);
+            setSelectedCourses(new Set(courses.map(c => c.id)));
         }
-        setSelectAllCourses(true);
-        setSelectedCourses(new Set(courses.map(c => c.id)));
     };
 
     const toggleIgnoreAssignment = (assignmentId: number) => {
-        const newIgnored = new Set(ignoredAssignments);
-        if (newIgnored.has(assignmentId)) {
-            newIgnored.delete(assignmentId);
-        } else {
-            newIgnored.add(assignmentId);
-        }
-        setIgnoredAssignments(newIgnored);
+        setIgnoredAssignments(prevIgnored => {
+            const newIgnored = new Set(prevIgnored);
+            if (newIgnored.has(assignmentId)) {
+                newIgnored.delete(assignmentId);
+            } else {
+                newIgnored.add(assignmentId);
+            }
+            return newIgnored;
+        });
     };
 
     const statusOptions: { value: StatusFilter; label: string; color: string }[] = [
@@ -297,9 +348,13 @@ export default function Assignments({
             
             <div className="filters">
                 <div className="filter-row">
-                    <div className="status-filter">
+                    <div className="status-filter" ref={statusDropdownRef}>
                         <button 
-                            onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowStatusDropdown(!showStatusDropdown);
+                                setShowCourseDropdown(false); // Close other dropdown
+                            }}
                             className="status-dropdown-btn"
                         >
                             Status ({selectedStatuses.size} selected) ▼
@@ -307,11 +362,18 @@ export default function Assignments({
                         {showStatusDropdown && (
                             <div className="status-dropdown">
                                 {statusOptions.map(option => (
-                                    <label key={option.value} className="status-option">
+                                    <label 
+                                        key={option.value} 
+                                        className="status-option"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
                                         <input
                                             type="checkbox"
                                             checked={selectedStatuses.has(option.value)}
-                                            onChange={() => toggleStatusFilter(option.value)}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+                                                toggleStatusFilter(option.value);
+                                            }}
                                         />
                                         <span 
                                             className="status-color-dot" 
@@ -324,29 +386,46 @@ export default function Assignments({
                         )}
                     </div>
 
-                    <div className="course-filter">
+                    <div className="course-filter" ref={courseDropdownRef}>
                         <button 
-                            onClick={() => setShowCourseDropdown(!showCourseDropdown)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowCourseDropdown(!showCourseDropdown);
+                                setShowStatusDropdown(false); // Close other dropdown
+                            }}
                             className="course-dropdown-btn"
                         >
                             Courses ({selectedCourses.size} selected) ▼
                         </button>
                         {showCourseDropdown && (
                             <div className="course-dropdown">
-                                <label className="select-all-course-label">
+                                <label 
+                                    className="select-all-course-label"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
                                     <input
                                         type="checkbox"
                                         checked={selectAllCourses}
-                                        onChange={handleSelectAllCourses}
+                                        onChange={(e) => {
+                                            e.stopPropagation();
+                                            handleSelectAllCourses();
+                                        }}
                                     />
                                     Select All
                                 </label>
                                 {courses.map(course => (
-                                    <label key={course.id} className="course-option">
+                                    <label 
+                                        key={course.id} 
+                                        className="course-option"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
                                         <input
                                             type="checkbox"
                                             checked={selectedCourses.has(course.id)}
-                                            onChange={() => toggleCourseFilter(course.id)}
+                                            onChange={(e) => {
+                                                e.stopPropagation();
+                                                toggleCourseFilter(course.id);
+                                            }}
                                         />
                                         {course.name}
                                     </label>
