@@ -1,6 +1,8 @@
 /* Basic reset and styles */
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: silk --default;
+};
 
 * {
   box-sizing: border-box;
