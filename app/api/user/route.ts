@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { validateCanvasUrl } from '../../../components/security';
 
 export async function GET(request: Request) {
     const authorization = request.headers.get('Authorization');
@@ -6,6 +7,11 @@ export async function GET(request: Request) {
 
     if (!authorization || !canvasUrl) {
         return NextResponse.json({ error: 'Missing Authorization or Canvas-URL header' }, { status: 401 });
+    }
+
+    // Validate Canvas URL to prevent SSRF attacks
+    if (!validateCanvasUrl(canvasUrl)) {
+        return NextResponse.json({ error: 'Invalid Canvas URL' }, { status: 400 });
     }
 
     try {

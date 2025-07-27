@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { validateCanvasUrl, validateCourseIds, validateDateString } from '../../../components/security';
 
 export async function GET(request: Request) {
     const authorization = request.headers.get('Authorization');
@@ -12,6 +13,25 @@ export async function GET(request: Request) {
 
     if (!authorization || !canvasUrl) {
         return NextResponse.json({ error: 'Missing Authorization or Canvas-URL header' }, { status: 401 });
+    }
+
+    // Validate Canvas URL to prevent SSRF attacks
+    if (!validateCanvasUrl(canvasUrl)) {
+        return NextResponse.json({ error: 'Invalid Canvas URL' }, { status: 400 });
+    }
+
+    // Validate courseIds to prevent injection attacks
+    if (courseIds.length > 0 && !validateCourseIds(courseIds)) {
+        return NextResponse.json({ error: 'Invalid courseIds parameter' }, { status: 400 });
+    }
+
+    // Validate date parameters
+    if (!validateDateString(startDate)) {
+        return NextResponse.json({ error: 'Invalid start_date parameter. Use YYYY-MM-DD format.' }, { status: 400 });
+    }
+
+    if (!validateDateString(endDate)) {
+        return NextResponse.json({ error: 'Invalid end_date parameter. Use YYYY-MM-DD format.' }, { status: 400 });
     }
 
     try {

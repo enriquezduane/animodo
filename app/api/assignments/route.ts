@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { validateCanvasUrl, validateCourseId } from '../../../components/security';
 
 export async function GET(request: Request) {
     const authorization = request.headers.get('Authorization');
@@ -12,6 +13,16 @@ export async function GET(request: Request) {
 
     if (!courseId) {
         return NextResponse.json({ error: 'Missing courseId parameter' }, { status: 400 });
+    }
+
+    // Validate Canvas URL to prevent SSRF attacks
+    if (!validateCanvasUrl(canvasUrl)) {
+        return NextResponse.json({ error: 'Invalid Canvas URL' }, { status: 400 });
+    }
+
+    // Validate courseId to prevent injection attacks
+    if (!validateCourseId(courseId)) {
+        return NextResponse.json({ error: 'Invalid courseId parameter' }, { status: 400 });
     }
 
     try {
