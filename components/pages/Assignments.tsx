@@ -539,7 +539,7 @@ export default function Assignments({
                                 </div>
                                 <div className="assignment-meta">
                                     <div className="due-date">
-                                        [{getCourseCode(assignment.courseName)}] Due: {formatDate(assignment.due_at)}
+                                        Due: {formatDate(assignment.due_at)}
                                     </div>
                                     <button
                                         onClick={() => toggleIgnoreAssignment(assignment.id)}
@@ -566,37 +566,37 @@ export default function Assignments({
 
             <style jsx>{`
                 .assignments {
-                    padding: var(--spacing-xl);
+                    padding: var(--spacing-lg);
                     background: var(--background-primary);
                     min-height: 100vh;
                 }
                 
                 .assignments h1 {
-                    margin: 0 0 var(--spacing-2xl) 0;
+                    margin: 0 0 var(--spacing-lg) 0;
                     color: var(--primary-color);
-                    font-size: var(--font-size-3xl);
+                    font-size: var(--font-size-2xl);
                     font-weight: 700;
                     display: flex;
                     align-items: center;
-                    gap: var(--spacing-md);
+                    gap: var(--spacing-sm);
                 }
 
                 .filters {
                     display: flex;
                     flex-direction: column;
-                    gap: var(--spacing-md);
-                    margin-bottom: var(--spacing-2xl);
+                    gap: var(--spacing-sm);
+                    margin-bottom: var(--spacing-lg);
                     flex-wrap: wrap;
                     background: var(--background-secondary);
-                    padding: var(--spacing-xl);
-                    border-radius: var(--radius-lg);
+                    padding: var(--spacing-lg);
+                    border-radius: 0;
                     box-shadow: var(--shadow-md);
                     border: 1px solid var(--border-color);
                 }
 
                 .filter-row {
                     display: flex;
-                    gap: var(--spacing-md);
+                    gap: var(--spacing-sm);
                     flex-wrap: wrap;
                 }
 
@@ -604,7 +604,7 @@ export default function Assignments({
                     padding: var(--spacing-sm) var(--spacing-lg);
                     border: 2px solid var(--border-color);
                     background: var(--background-primary);
-                    border-radius: var(--radius-md);
+                    border-radius: 0;
                     cursor: pointer;
                     font-size: var(--font-size-sm);
                     color: var(--text-primary);
@@ -638,7 +638,7 @@ export default function Assignments({
                     padding: var(--spacing-sm) var(--spacing-lg);
                     border: 2px solid var(--border-color);
                     background: var(--background-primary);
-                    border-radius: var(--radius-md);
+                    border-radius: 0;
                     cursor: pointer;
                     font-size: var(--font-size-sm);
                     color: var(--text-primary);
@@ -663,7 +663,7 @@ export default function Assignments({
                     left: 0;
                     background: var(--background-secondary);
                     border: 2px solid var(--border-color);
-                    border-radius: var(--radius-md);
+                    border-radius: 0;
                     box-shadow: var(--shadow-lg);
                     z-index: 1000;
                     width: 220px;
@@ -711,7 +711,7 @@ export default function Assignments({
                     padding: var(--spacing-sm) var(--spacing-lg);
                     border: 2px solid var(--border-color);
                     background: var(--background-primary);
-                    border-radius: var(--radius-md);
+                    border-radius: 0;
                     cursor: pointer;
                     font-size: var(--font-size-sm);
                     color: var(--text-primary);
@@ -736,7 +736,7 @@ export default function Assignments({
                     left: 0;
                     background: var(--background-secondary);
                     border: 2px solid var(--border-color);
-                    border-radius: var(--radius-md);
+                    border-radius: 0;
                     box-shadow: var(--shadow-lg);
                     z-index: 1000;
                     width: 280px;
@@ -793,14 +793,14 @@ export default function Assignments({
                     display: flex;
                     flex-direction: column;
                     background: var(--background-secondary);
-                    border-radius: var(--radius-lg);
+                    border-radius: 0;
                     box-shadow: var(--shadow-md);
                     border: 1px solid var(--border-color);
                     overflow: hidden;
                 }
 
                 .assignment-card {
-                    padding: var(--spacing-lg) var(--spacing-xl);
+                    padding: var(--spacing-md) var(--spacing-lg);
                     border-top: 1px solid var(--border-color);
                     transition: all 0.2s ease;
                     background: var(--background-secondary);
@@ -820,8 +820,8 @@ export default function Assignments({
                     display: flex;
                     justify-content: space-between;
                     align-items: flex-start;
-                    gap: var(--spacing-md);
-                    margin-bottom: var(--spacing-sm);
+                    gap: var(--spacing-sm);
+                    margin-bottom: var(--spacing-xs);
                 }
 
                 .assignment-title {
@@ -853,14 +853,14 @@ export default function Assignments({
                     flex-shrink: 0;
                     background: var(--background-primary);
                     padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--radius-sm);
+                    border-radius: 0;
                     border: 1px solid var(--border-color);
                 }
 
                 .status-badge {
                     color: white;
                     padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--radius-lg);
+                    border-radius: 12px;
                     font-size: var(--font-size-xs);
                     font-weight: 600;
                     white-space: nowrap;
@@ -877,6 +877,7 @@ export default function Assignments({
                     justify-content: space-between;
                     align-items: center;
                     font-weight: 500;
+                    margin-top: var(--spacing-xs);
                 }
 
                 .due-date {
@@ -898,7 +899,7 @@ export default function Assignments({
                     padding: var(--spacing-xs) var(--spacing-sm);
                     border: 2px solid var(--border-color);
                     background: var(--background-primary);
-                    border-radius: var(--radius-md);
+                    border-radius: 0;
                     cursor: pointer;
                     font-size: var(--font-size-xs);
                     color: var(--text-primary);
@@ -934,7 +935,7 @@ export default function Assignments({
                     text-align: center;
                     padding: var(--spacing-2xl) var(--spacing-xl);
                     background: var(--background-primary);
-                    border-radius: var(--radius-md);
+                    border-radius: 0;
                     border: 2px dashed var(--border-color);
                     font-size: var(--font-size-base);
                 }

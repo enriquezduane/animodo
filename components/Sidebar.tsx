@@ -14,10 +14,10 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
     const getFormattedFirstName = (fullName: string) => {
         const parts = fullName.split(',');
         if (parts.length < 2) return fullName;
-        
+
         const firstAndMiddleNames = parts[1].trim();
         const firstName = firstAndMiddleNames.split(' ')[0];
-        
+
         return firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
     };
 
@@ -32,7 +32,7 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
             <div className="sidebar-header">
                 <h2>Welcome, {userName ? getFormattedFirstName(userName) : 'User'}!</h2>
             </div>
-            
+
             <nav className="sidebar-nav">
                 {sidebarItems.map(item => (
                     <button
@@ -45,13 +45,13 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
                     </button>
                 ))}
             </nav>
-            
+
             <div className="sidebar-footer">
                 <button onClick={onLogout} className="logout-btn">
-                    <LuLogOut size={16} /> Logout
+                    <LuLogOut size={16} /> Exit
                 </button>
             </div>
-            
+
             <style jsx>{`
                 .sidebar {
                     width: 250px;
@@ -112,7 +112,7 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
                     color: var(--dark-gray);
                     font-weight: 600;
                     box-shadow: var(--shadow-sm);
-                    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+                    border-radius: 0;
                     margin-right: var(--spacing-sm);
                 }
                 
@@ -142,7 +142,7 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
                     background: var(--primary-color);
                     color: white;
                     border: none;
-                    border-radius: var(--radius-md);
+                    border-radius: 0;
                     cursor: pointer;
                     font-size: var(--font-size-sm);
                     font-weight: 600;
@@ -199,7 +199,7 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
                     }
                     
                     .sidebar-item.active {
-                        border-radius: var(--radius-md);
+                        border-radius: 0;
                         margin-right: 0;
                     }
                 }

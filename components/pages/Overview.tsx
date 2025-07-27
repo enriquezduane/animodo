@@ -2,16 +2,19 @@
 
 import { useState, useEffect } from 'react';
 import { Assignment, Announcement, Course } from '../types';
-import { LuAlarmClock, LuMegaphone, LuEyeOff, LuEye } from 'react-icons/lu';
+import { LuAlarmClock, LuMegaphone, LuEyeOff, LuEye, LuRefreshCw, LuUndo2, LuLayoutDashboard } from 'react-icons/lu';
 
 interface OverviewProps {
     courses: Course[];
     urgentAssignments: (Assignment & { courseId: number })[];
     recentAnnouncements: (Announcement & { courseId: number })[];
+    onRefresh?: () => void;
+    isRefreshing?: boolean;
 }
 
-export default function Overview({ courses, urgentAssignments, recentAnnouncements }: OverviewProps) {
+export default function Overview({ courses, urgentAssignments, recentAnnouncements, onRefresh, isRefreshing }: OverviewProps) {
     const [ignoredAssignments, setIgnoredAssignments] = useState<Set<number>>(new Set());
+    const [showIgnored, setShowIgnored] = useState(false);
 
     // Load ignored assignments from localStorage
     useEffect(() => {
@@ -49,6 +52,10 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
     const filteredUrgentAssignments = urgentAssignments
         .filter(assignment => !ignoredAssignments.has(assignment.id))
         .slice(0, 5);
+
+    // Get ignored assignments that are in the current urgent list
+    const ignoredUrgentAssignments = urgentAssignments
+        .filter(assignment => ignoredAssignments.has(assignment.id));
 
     const getCourseCode = (courseName: string) => {
         const match = courseName.match(/^([A-Z]+\d+)/);
@@ -186,10 +193,36 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
 
     return (
         <div className="overview">
-            <h1>Overview</h1>
+            <div className="overview-header">
+                <h1><LuLayoutDashboard size={24} /> Overview</h1>
+                {onRefresh && (
+                    <button 
+                        onClick={onRefresh}
+                        disabled={isRefreshing}
+                        className={`refresh-btn ${isRefreshing ? 'refreshing' : ''}`}
+                        title="Refresh data to get latest assignments and announcements"
+                    >
+                        <LuRefreshCw size={20} />
+                        {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
+                    </button>
+                )}
+            </div>
             
             <div className="overview-section">
-                <h2><LuAlarmClock size={20} /> Urgent Assignments</h2>
+                <div className="section-header">
+                    <h2><LuAlarmClock size={20} /> Urgent Assignments</h2>
+                    {ignoredUrgentAssignments.length > 0 && (
+                        <button 
+                            onClick={() => setShowIgnored(!showIgnored)}
+                            className={`ignored-toggle-btn ${showIgnored ? 'active' : ''}`}
+                            title={`${showIgnored ? 'Hide' : 'Show'} ${ignoredUrgentAssignments.length} ignored assignment${ignoredUrgentAssignments.length === 1 ? '' : 's'}`}
+                        >
+                            <LuUndo2 size={16} />
+                            {showIgnored ? 'Hide Ignored' : `Show Ignored (${ignoredUrgentAssignments.length})`}
+                        </button>
+                    )}
+                </div>
+                
                 {filteredUrgentAssignments.length > 0 ? (
                     <div className="assignment-list">
                         {filteredUrgentAssignments.map(assignment => {
@@ -233,10 +266,60 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                 ) : (
                     <p className="empty-state">No urgent assignments</p>
                 )}
+
+                {/* Ignored Assignments Section */}
+                {showIgnored && ignoredUrgentAssignments.length > 0 && (
+                    <div className="ignored-assignments">
+                        <h3 className="ignored-header">
+                            <LuUndo2 size={18} />
+                            Ignored Assignments ({ignoredUrgentAssignments.length})
+                        </h3>
+                        <div className="assignment-list">
+                            {ignoredUrgentAssignments.map(assignment => {
+                                const course = courses.find(c => c.id === assignment.courseId);
+                                const courseCode = course ? getCourseCode(course.name) : '';
+                                const statusLabel = getCombinedStatusLabel(assignment);
+                                const statusColor = getStatusColor(assignment);
+                                
+                                return (
+                                    <div key={assignment.id} className="assignment-card ignored-card">
+                                        <div className="assignment-header">
+                                            <a href={assignment.html_url} target="_blank" rel="noreferrer" className="assignment-title">
+                                                [{courseCode}] {assignment.name}
+                                            </a>
+                                            <div className="status-container">
+                                                <span 
+                                                    className="status-badge" 
+                                                    style={{ backgroundColor: statusColor }}
+                                                >
+                                                    {statusLabel}
+                                                </span>
+                                                <button
+                                                    onClick={() => toggleIgnoreAssignment(assignment.id)}
+                                                    className="restore-btn"
+                                                    title="Restore this assignment to urgent list"
+                                                >
+                                                    <LuUndo2 size={14} />
+                                                    Restore
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="assignment-due">
+                                            Due: {formatDate(assignment.due_at)}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="overview-section">
-                <h2><LuMegaphone size={20} /> Recent Announcements</h2>
+                <div className="section-header">
+                    <h2><LuMegaphone size={20} /> Recent Announcements</h2>
+                </div>
+                
                 {recentAnnouncements.length > 0 ? (
                     <div className="announcement-list">
                         {recentAnnouncements.map(announcement => {
@@ -244,9 +327,11 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                             const courseCode = course ? getCourseCode(course.name) : '';
                             return (
                                 <div key={announcement.id} className="announcement-card">
-                                    <a href={announcement.url} target="_blank" rel="noreferrer" className="announcement-title">
-                                        [{courseCode}] {announcement.title}
-                                    </a>
+                                    <div className="announcement-header">
+                                        <a href={announcement.url} target="_blank" rel="noreferrer" className="announcement-title">
+                                            [{courseCode}] {announcement.title}
+                                        </a>
+                                    </div>
                                     <div className="announcement-meta">
                                         Posted: {formatDate(announcement.posted_at)} ({getTimeAgo(announcement.posted_at)})
                                     </div>
@@ -261,53 +346,188 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
 
             <style jsx>{`
                 .overview {
-                    padding: var(--spacing-xl);
+                    padding: var(--spacing-lg);
                     background: var(--background-primary);
                     min-height: 100vh;
                 }
                 
+                .overview-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: var(--spacing-lg);
+                    padding-bottom: var(--spacing-sm);
+                    border-bottom: 2px solid var(--border-color);
+                }
+
                 .overview h1 {
-                    margin: 0 0 var(--spacing-2xl) 0;
+                    margin: 0;
                     color: var(--primary-color);
-                    font-size: var(--font-size-3xl);
+                    font-size: var(--font-size-2xl);
                     font-weight: 700;
                     display: flex;
                     align-items: center;
-                    gap: var(--spacing-md);
+                    gap: var(--spacing-sm);
+                }
+
+                .refresh-btn {
+                    background: var(--accent-color);
+                    color: white;
+                    padding: var(--spacing-xs) var(--spacing-md);
+                    border-radius: 0;
+                    border: none;
+                    cursor: pointer;
+                    font-size: var(--font-size-sm);
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: var(--spacing-xs);
+                    box-shadow: var(--shadow-sm);
+                    transition: all 0.2s ease;
+                }
+
+                .refresh-btn:hover:not(:disabled) {
+                    background: #8FB61F;
+                    transform: translateY(-2px);
+                    box-shadow: var(--shadow-md);
+                }
+
+                .refresh-btn:disabled {
+                    background: var(--border-color);
+                    color: var(--text-secondary);
+                    cursor: not-allowed;
+                    opacity: 0.7;
+                }
+
+                .refresh-btn.refreshing {
+                    background: #8FB61F;
+                }
+
+                .refresh-btn.refreshing svg {
+                    animation: spin 1s linear infinite;
+                }
+
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
                 }
 
                 .overview-section {
-                    margin-bottom: var(--spacing-2xl);
+                    margin-bottom: var(--spacing-lg);
                     background: var(--background-secondary);
-                    border-radius: var(--radius-lg);
-                    padding: var(--spacing-xl);
+                    border-radius: 0;
+                    padding: var(--spacing-lg);
                     box-shadow: var(--shadow-md);
                     border: 1px solid var(--border-color);
                 }
 
-                .overview-section h2 {
-                    margin: 0 0 var(--spacing-lg) 0;
+                .section-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: var(--spacing-md);
+                    padding-bottom: var(--spacing-xs);
+                    border-bottom: 2px solid var(--border-color);
+                }
+
+                .section-header h2 {
+                    margin: 0;
                     color: var(--primary-color);
-                    font-size: var(--font-size-xl);
+                    font-size: var(--font-size-lg);
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: var(--spacing-xs);
+                }
+
+                .ignored-toggle-btn {
+                    background: var(--background-primary);
+                    color: var(--text-primary);
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border: 2px solid var(--border-color);
+                    border-radius: 0;
+                    cursor: pointer;
+                    font-size: var(--font-size-sm);
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: var(--spacing-xs);
+                    box-shadow: var(--shadow-sm);
+                    transition: all 0.2s ease;
+                }
+
+                .ignored-toggle-btn:hover {
+                    background: var(--background-secondary);
+                    border-color: var(--accent-color);
+                    color: var(--primary-color);
+                    transform: translateY(-2px);
+                    box-shadow: var(--shadow-md);
+                }
+
+                .ignored-toggle-btn.active {
+                    background: var(--accent-color);
+                    color: var(--dark-gray);
+                    border-color: var(--accent-color);
+                    font-weight: 700;
+                }
+
+                .ignored-assignments {
+                    margin-top: var(--spacing-xl);
+                    padding-top: var(--spacing-xl);
+                    border-top: 2px solid var(--border-color);
+                    background: rgba(167, 209, 41, 0.05);
+                    border-radius: 0;
+                    padding: var(--spacing-lg);
+                }
+
+                .ignored-header {
+                    margin: 0 0 var(--spacing-md) 0;
+                    color: var(--primary-color);
+                    font-size: var(--font-size-lg);
                     font-weight: 600;
                     display: flex;
                     align-items: center;
                     gap: var(--spacing-sm);
-                    padding-bottom: var(--spacing-md);
-                    border-bottom: 2px solid var(--border-color);
+                    padding-bottom: var(--spacing-sm);
+                    border-bottom: 1px solid var(--border-color);
+                }
+
+                .restore-btn {
+                    background: var(--accent-color);
+                    color: var(--dark-gray);
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border: 2px solid var(--accent-color);
+                    border-radius: 0;
+                    cursor: pointer;
+                    font-size: var(--font-size-xs);
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: var(--spacing-xs);
+                    box-shadow: var(--shadow-sm);
+                    transition: all 0.2s ease;
+                    min-width: auto;
+                    height: auto;
+                }
+
+                .restore-btn:hover {
+                    background: #8FB61F;
+                    border-color: #8FB61F;
+                    transform: translateY(-1px);
+                    box-shadow: var(--shadow-md);
                 }
 
                 .assignment-list, .announcement-list {
                     display: flex;
                     flex-direction: column;
-                    gap: var(--spacing-md);
+                    gap: var(--spacing-sm);
                 }
 
                 .assignment-card, .announcement-card {
                     background: var(--background-primary);
                     border: 2px solid var(--border-color);
-                    border-radius: var(--radius-md);
-                    padding: var(--spacing-lg);
+                    border-radius: 0;
+                    padding: var(--spacing-md);
                     box-shadow: var(--shadow-sm);
                     transition: all 0.2s ease;
                 }
@@ -322,8 +542,8 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                     display: flex;
                     justify-content: space-between;
                     align-items: flex-start;
-                    gap: var(--spacing-md);
-                    margin-bottom: var(--spacing-sm);
+                    gap: var(--spacing-sm);
+                    margin-bottom: var(--spacing-xs);
                 }
 
                 .status-container {
@@ -331,17 +551,6 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                     align-items: center;
                     gap: var(--spacing-sm);
                     flex-shrink: 0;
-                }
-
-                .days-countdown {
-                    background: linear-gradient(135deg, var(--accent-color), #8FB61F);
-                    color: var(--dark-gray);
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--radius-lg);
-                    font-size: var(--font-size-xs);
-                    font-weight: 700;
-                    white-space: nowrap;
-                    box-shadow: var(--shadow-sm);
                 }
 
                 .assignment-title, .announcement-title {
@@ -361,7 +570,7 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                 .status-badge {
                     color: white;
                     padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--radius-lg);
+                    border-radius: 12px;
                     font-size: var(--font-size-xs);
                     font-weight: 600;
                     white-space: nowrap;
@@ -374,7 +583,7 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                     padding: var(--spacing-xs);
                     border: 2px solid var(--border-color);
                     background: var(--background-primary);
-                    border-radius: var(--radius-sm);
+                    border-radius: 0;
                     cursor: pointer;
                     color: var(--text-primary);
                     transition: all 0.2s ease;
@@ -412,13 +621,77 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                     margin-top: var(--spacing-xs);
                 }
 
+                .ignored-card {
+                    opacity: 0.8;
+                    background: var(--background-primary);
+                    border: 2px dashed var(--border-color);
+                }
+
+                .ignored-card:hover {
+                    opacity: 1;
+                    border-color: var(--accent-color);
+                    border-style: solid;
+                    transform: translateY(-2px);
+                }
+
+                .ignored-card .assignment-header {
+                    background: var(--background-primary);
+                    border: 2px solid var(--border-color);
+                    border-radius: 0;
+                    padding: var(--spacing-lg);
+                    box-shadow: var(--shadow-sm);
+                    margin-bottom: var(--spacing-sm);
+                }
+
+                .ignored-card .assignment-header .status-container {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: var(--spacing-xs);
+                }
+
+                .ignored-card .assignment-header .status-badge {
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: var(--radius-lg);
+                    font-size: var(--font-size-xs);
+                    font-weight: 600;
+                    white-space: nowrap;
+                    box-shadow: var(--shadow-sm);
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+
+                .ignored-card .assignment-header .restore-btn {
+                    background: var(--accent-color);
+                    color: var(--dark-gray);
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border: 2px solid var(--accent-color);
+                    border-radius: 0;
+                    cursor: pointer;
+                    font-size: var(--font-size-xs);
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: var(--spacing-xs);
+                    box-shadow: var(--shadow-sm);
+                    transition: all 0.2s ease;
+                    min-width: auto;
+                    height: auto;
+                }
+
+                .ignored-card .assignment-header .restore-btn:hover {
+                    background: #8FB61F;
+                    border-color: #8FB61F;
+                    transform: translateY(-1px);
+                    box-shadow: var(--shadow-md);
+                }
+
                 .empty-state {
                     color: var(--text-secondary);
                     font-style: italic;
                     text-align: center;
                     padding: var(--spacing-2xl) var(--spacing-xl);
                     background: var(--background-primary);
-                    border-radius: var(--radius-md);
+                    border-radius: 0;
                     border: 2px dashed var(--border-color);
                     font-size: var(--font-size-base);
                 }
@@ -426,23 +699,23 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                 /* Responsive design */
                 @media (max-width: 768px) {
                     .overview {
-                        padding: var(--spacing-lg);
+                        padding: var(--spacing-md);
                     }
                     
                     .overview h1 {
-                        font-size: var(--font-size-2xl);
-                        margin-bottom: var(--spacing-xl);
+                        font-size: var(--font-size-xl);
+                        margin-bottom: var(--spacing-md);
                     }
                     
                     .overview-section {
-                        padding: var(--spacing-lg);
-                        margin-bottom: var(--spacing-xl);
+                        padding: var(--spacing-md);
+                        margin-bottom: var(--spacing-md);
                     }
                     
                     .assignment-header {
                         flex-direction: column;
                         align-items: stretch;
-                        gap: var(--spacing-sm);
+                        gap: var(--spacing-xs);
                     }
                     
                     .status-container {
@@ -450,24 +723,24 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                     }
                     
                     .assignment-card, .announcement-card {
-                        padding: var(--spacing-md);
+                        padding: var(--spacing-sm);
                     }
                 }
                 
                 @media (max-width: 480px) {
                     .overview {
-                        padding: var(--spacing-md);
+                        padding: var(--spacing-sm);
                     }
                     
                     .overview h1 {
-                        font-size: var(--font-size-xl);
+                        font-size: var(--font-size-lg);
                         flex-direction: column;
                         text-align: center;
-                        gap: var(--spacing-sm);
+                        gap: var(--spacing-xs);
                     }
                     
                     .overview-section h2 {
-                        font-size: var(--font-size-lg);
+                        font-size: var(--font-size-base);
                         flex-direction: column;
                         text-align: center;
                         gap: var(--spacing-xs);

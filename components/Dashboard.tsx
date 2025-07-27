@@ -9,97 +9,104 @@ import Announcements from './pages/Announcements';
 import { Course, Assignment, Announcement, CourseWithAssignments, CourseWithAnnouncements } from './types';
 
 export default function DashboardClient() {
-    const [userName, setUserName] = useState<string | null>(null);
     const [courses, setCourses] = useState<Course[]>([]);
-    const [assignments, setAssignments] = useState<Record<number, Assignment[]>>({});
-    const [announcements, setAnnouncements] = useState<Record<number, Announcement[]>>({});
+    const [assignments, setAssignments] = useState<{ [courseId: number]: Assignment[] }>({});
+    const [announcements, setAnnouncements] = useState<{ [courseId: number]: Announcement[] }>({});
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [userName, setUserName] = useState<string | null>(null);
     const [currentSection, setCurrentSection] = useState('overview');
     const [expandedAssignmentCourses, setExpandedAssignmentCourses] = useState<Set<number>>(new Set());
     const [expandedAnnouncementCourses, setExpandedAnnouncementCourses] = useState<Set<number>>(new Set());
     const [showOverdueAssignments, setShowOverdueAssignments] = useState(false);
-    const [showOldAnnouncements, setShowOldAnnouncements] = useState(false);
     const [showNoDueDates, setShowNoDueDates] = useState(false);
+    const [showOldAnnouncements, setShowOldAnnouncements] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
-        async function fetchData() {
-            const token = localStorage.getItem('canvas_token');
-            if (!token) {
-                router.push('/');
-                return;
-            }
-
-            const headers = {
-                'Authorization': `Bearer ${token}`,
-                'Canvas-URL': 'https://dlsu.instructure.com'
-            };
-
-            try {
-                // Fetch user name
-                const userRes = await fetch('/api/user', { headers });
-                if (!userRes.ok) {
-                    if (userRes.status === 401) {
-                        localStorage.removeItem('canvas_token');
-                        router.push('/');
-                        return;
-                    }
-                    throw new Error('Failed to fetch user data');
-                }
-                const userData = await userRes.json();
-                setUserName(userData.name);
-
-                // Fetch courses
-                const coursesRes = await fetch('/api/courses', { headers });
-                if (!coursesRes.ok) {
-                    throw new Error('Failed to fetch courses');
-                }
-                const coursesData: Course[] = await coursesRes.json();
-                setCourses(coursesData);
-
-                // Fetch assignments and announcements
-                const courseIds = coursesData.map(c => c.id);
-                const assignmentsMap: Record<number, Assignment[]> = {};
-                const announcementsMap: Record<number, Announcement[]> = {};
-
-                // Fetch assignments for each course
-                const assignmentPromises = coursesData.map(async (course) => {
-                    const assignRes = await fetch(`/api/assignments?courseId=${course.id}`, { headers });
-                    if (assignRes.ok) {
-                        const assignData: Assignment[] = await assignRes.json();
-                        assignmentsMap[course.id] = assignData;
-                    }
-                });
-
-                await Promise.all(assignmentPromises);
-
-                // Fetch all announcements
-                const annParams = courseIds.map(id => `courseIds=${id}`).join('&');
-                const annRes = await fetch(`/api/announcements?${annParams}`, { headers });
-                if (annRes.ok) {
-                    const annData: Announcement[] = await annRes.json();
-
-                    // Group announcements by course using context_code
-                    for (const ann of annData) {
-                        const courseId = parseInt(ann.context_code.replace('course_', ''));
-                        if (!announcementsMap[courseId]) announcementsMap[courseId] = [];
-                        announcementsMap[courseId].push(ann);
-                    }
-                }
-
-                setAssignments(assignmentsMap);
-                setAnnouncements(announcementsMap);
-            } catch (err) {
-                setError('Failed to load dashboard data');
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        }
-
         fetchData();
     }, [router]);
+
+    async function fetchData() {
+        const token = localStorage.getItem('canvas_token');
+        if (!token) {
+            router.push('/');
+            return;
+        }
+
+        const headers = {
+            'Authorization': `Bearer ${token}`,
+            'Canvas-URL': 'https://dlsu.instructure.com'
+        };
+
+        try {
+            // Fetch user info
+            const userRes = await fetch('/api/user', { headers });
+            if (!userRes.ok) {
+                if (userRes.status === 401) {
+                    localStorage.removeItem('canvas_token');
+                    router.push('/');
+                    return;
+                }
+                throw new Error('Failed to fetch user data');
+            }
+            const userData = await userRes.json();
+            setUserName(userData.name);
+
+            // Fetch courses
+            const coursesRes = await fetch('/api/courses', { headers });
+            if (!coursesRes.ok) {
+                throw new Error('Failed to fetch courses');
+            }
+            const coursesData: Course[] = await coursesRes.json();
+            setCourses(coursesData);
+
+            const courseIds = coursesData.map(course => course.id);
+            const assignmentsMap: { [courseId: number]: Assignment[] } = {};
+            const announcementsMap: { [courseId: number]: Announcement[] } = {};
+
+            // Fetch assignments for each course
+            const assignmentPromises = courseIds.map(async (courseId) => {
+                const res = await fetch(`/api/assignments?courseId=${courseId}`, { headers });
+                if (res.ok) {
+                    const data: Assignment[] = await res.json();
+                    assignmentsMap[courseId] = data;
+                }
+            });
+
+            await Promise.all(assignmentPromises);
+
+            // Fetch all announcements
+            const annParams = courseIds.map(id => `courseIds=${id}`).join('&');
+            const annRes = await fetch(`/api/announcements?${annParams}`, { headers });
+            if (annRes.ok) {
+                const annData: Announcement[] = await annRes.json();
+
+                // Group announcements by course using context_code
+                for (const ann of annData) {
+                    const courseId = parseInt(ann.context_code.replace('course_', ''));
+                    if (!announcementsMap[courseId]) announcementsMap[courseId] = [];
+                    announcementsMap[courseId].push(ann);
+                }
+            }
+
+            setAssignments(assignmentsMap);
+            setAnnouncements(announcementsMap);
+        } catch (err) {
+            setError('Failed to load dashboard data');
+            console.error(err);
+        } finally {
+            setLoading(false);
+            setIsRefreshing(false);
+        }
+    }
+
+    const handleRefresh = async () => {
+        setIsRefreshing(true);
+        setError(null);
+        await fetchData();
+    };
 
     const handleLogout = () => {
         localStorage.removeItem('canvas_token');
@@ -238,15 +245,52 @@ export default function DashboardClient() {
 
     if (loading) return (
         <div className="loading">
-            <div>Loading...</div>
+            <div className="loading-content">
+                <div className="spinner"></div>
+                <div className="loading-text">Loading data...</div>
+                <div className="loading-subtext">This might take a few seconds</div>
+            </div>
             <style jsx>{`
                 .loading {
                     display: flex;
                     justify-content: center;
                     align-items: center;
                     height: 100vh;
-                    font-size: 20px;
-                    color: #6c757d;
+                    background: var(--background-primary);
+                    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                }
+
+                .loading-content {
+                    text-align: center;
+                    color: var(--text-primary);
+                }
+
+                .spinner {
+                    width: 40px;
+                    height: 40px;
+                    border: 4px solid var(--border-color);
+                    border-top: 4px solid var(--accent-color);
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                    margin: 0 auto 20px;
+                }
+
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+
+                .loading-text {
+                    font-size: 18px;
+                    font-weight: 500;
+                    margin-bottom: 8px;
+                    color: var(--text-primary);
+                }
+
+                .loading-subtext {
+                    font-size: 14px;
+                    color: var(--text-secondary);
+                    opacity: 0.7;
                 }
             `}</style>
         </div>
@@ -281,6 +325,8 @@ export default function DashboardClient() {
                         courses={courses}
                         urgentAssignments={urgentAssignments}
                         recentAnnouncements={recentAnnouncements}
+                        isRefreshing={isRefreshing}
+                        onRefresh={handleRefresh}
                     />
                 );
             case 'assignments':
