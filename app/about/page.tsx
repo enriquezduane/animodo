@@ -49,7 +49,7 @@ export default function AboutPage() {
                         </section>
 
                         <section className="about-section">
-                            <h2>Why is there no persistence capability</h2>
+                            <h2>Why is there no persistent session capability</h2>
                             <p>
                                 That's one disadvantage to this app. I wanted to implement Canvas OAuth <strong>Login with Canvas!</strong> but this requires me to ask someone with DLSU Canvas admin privileges to provide me authentication.  For now, enjoy a simple to use application without persistent login - you'll need to enter your access token each time you visit.
                             </p>
