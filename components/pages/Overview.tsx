@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Assignment, Announcement, Course } from '../types';
+import { getCourseCode } from '../utils';
 import { LuAlarmClock, LuMegaphone, LuEyeOff, LuEye, LuRefreshCw, LuUndo2, LuLayoutDashboard } from 'react-icons/lu';
 
 interface OverviewProps {
@@ -57,10 +58,7 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
     const ignoredUrgentAssignments = urgentAssignments
         .filter(assignment => ignoredAssignments.has(assignment.id));
 
-    const getCourseCode = (courseName: string) => {
-        const match = courseName.match(/^([A-Z]+\d+)/);
-        return match ? match[1] : courseName.split(' ')[0];
-    };
+
 
     const formatDate = (dateString: string | null) => {
         if (!dateString) return 'No due date';

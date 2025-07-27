@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Assignment, CourseWithAssignments, Course } from '../types';
+import { getCourseCode } from '../utils';
 import { LuClipboardList, LuEyeOff, LuEye } from 'react-icons/lu';
 
 interface AssignmentsProps {
@@ -117,10 +118,7 @@ export default function Assignments({
         return () => clearTimeout(timeoutId);
     }, [selectedCourses, selectAllCourses]);
 
-    const getCourseCode = (courseName: string) => {
-        const match = courseName.match(/^([A-Z]+\d+)/);
-        return match ? match[1] : courseName.split(' ')[0];
-    };
+
 
     const formatDate = (dateString: string | null) => {
         if (!dateString) return 'No due date';
@@ -478,7 +476,7 @@ export default function Assignments({
                                                 toggleCourseFilter(course.id);
                                             }}
                                         />
-                                        {course.name}
+                                        {getCourseCode(course.name)}
                                     </label>
                                 ))}
                             </div>

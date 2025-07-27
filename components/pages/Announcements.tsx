@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { CourseWithAnnouncements, Course } from '../types';
+import { getCourseCode } from '../utils';
 import { LuMegaphone } from 'react-icons/lu';
 
 interface AnnouncementsProps {
@@ -73,10 +74,7 @@ export default function Announcements({
         return () => clearTimeout(timeoutId);
     }, [selectedCourses, selectAllCourses]);
 
-    const getCourseCode = (courseName: string) => {
-        const match = courseName.match(/^([A-Z]+\d+)/);
-        return match ? match[1] : courseName.split(' ')[0];
-    };
+
 
     const formatDate = (dateString: string | null) => {
         if (!dateString) return 'No date';
@@ -215,7 +213,7 @@ export default function Announcements({
                                                 toggleCourseFilter(course.id);
                                             }}
                                         />
-                                        {course.name}
+                                        {getCourseCode(course.name)}
                                     </label>
                                 ))}
                             </div>
