@@ -1,41 +1,60 @@
-import { NextResponse } from 'next/server';
-import { validateCanvasUrl } from '../../../components/security';
+import { NextRequest, NextResponse } from 'next/server';
+import { Course, ApiError } from '../../../components/types';
+import { extractCanvasConfig, fetchFromCanvas, createErrorResponse, ApiResult } from '../shared/canvas-api.utils';
 
-export async function GET(request: Request) {
-    const authorization = request.headers.get('Authorization');
-    const canvasUrl = request.headers.get('Canvas-URL');
+/**
+ * Fetch courses from Canvas API
+ */
+async function fetchCanvasCourses(config: any): Promise<ApiResult<readonly Course[]>> {
+  const result = await fetchFromCanvas<any[]>(config, '/api/v1/users/self/favorites/courses', 'fetch courses from Canvas');
+  
+  if (!result.success) {
+    return result;
+  }
+  
+  // Validate and transform the data
+  if (!Array.isArray(result.data)) {
+    return {
+      success: false,
+      error: 'Invalid courses data received from Canvas',
+      status: 502
+    };
+  }
 
-    if (!authorization || !canvasUrl) {
-        return NextResponse.json({ error: 'Missing Authorization or Canvas-URL header' }, { status: 401 });
+  const courses: Course[] = result.data
+    .filter(course => course?.id && course?.name) // Filter out invalid entries
+    .map(course => ({
+      id: course.id,
+      name: course.name
+    }));
+
+  return {
+    success: true,
+    data: courses
+  };
+}
+
+/**
+ * GET /api/courses
+ * Fetches all active courses for the current user from Canvas
+ */
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  try {
+    // Extract and validate Canvas API configuration
+    const configResult = extractCanvasConfig(request);
+    if (!configResult.success) {
+      return NextResponse.json(createErrorResponse(configResult.error), { status: configResult.status });
     }
 
-    // Validate Canvas URL to prevent SSRF attacks
-    if (!validateCanvasUrl(canvasUrl)) {
-        return NextResponse.json({ error: 'Invalid Canvas URL' }, { status: 400 });
+    // Fetch courses from Canvas
+    const coursesResult = await fetchCanvasCourses(configResult.data);
+    if (!coursesResult.success) {
+      return NextResponse.json(createErrorResponse(coursesResult.error), { status: coursesResult.status });
     }
 
-    try {
-        const res = await fetch(
-            `${canvasUrl}/api/v1/users/self/favorites/courses`,
-            {
-                headers: {
-                    Authorization: authorization,
-                },
-            }
-        );
-
-        if (!res.ok) {
-            return NextResponse.json({ error: 'Failed to fetch courses' }, { status: res.status });
-        }
-
-        const data = await res.json();
-        const courses = data.map((course: any) => ({
-            id: course.id,
-            name: course.name
-        }));
-        
-        return NextResponse.json(courses);
-    } catch (error) {
-        return NextResponse.json({ error: 'Failed to fetch courses' }, { status: 500 });
-    }
+    return NextResponse.json(coursesResult.data, { status: 200 });
+  } catch (error) {
+    console.error('Unexpected error in courses API route:', error);
+    return NextResponse.json(createErrorResponse('Internal server error'), { status: 500 });
+  }
 }

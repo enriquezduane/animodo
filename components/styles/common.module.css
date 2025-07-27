@@ -1,0 +1,319 @@
+/* Common component styles following BEM methodology */
+
+/* Loading states */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: var(--background-primary);
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.loadingContent {
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border-color);
+  border-top: 4px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loadingText {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.loadingSubtext {
+  font-size: 14px;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+/* Error states */
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 20px;
+  color: var(--error-color);
+  text-align: center;
+  padding: var(--spacing-xl);
+}
+
+/* Empty states */
+.emptyState {
+  color: var(--text-secondary);
+  font-style: italic;
+  text-align: center;
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  background: var(--background-primary);
+  border-radius: 0;
+  border: 2px dashed var(--border-color);
+  font-size: var(--font-size-base);
+}
+
+/* Cards */
+.card {
+  background: var(--background-primary);
+  border: 2px solid var(--border-color);
+  border-radius: 0;
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--accent-color);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.cardTitle {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  flex: 1;
+  font-size: var(--font-size-base);
+  transition: color 0.2s ease;
+}
+
+.cardTitle:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
+/* Badges */
+.badge {
+  background: var(--accent-color);
+  color: var(--dark-gray);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 0;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.courseBadge {
+  composes: badge;
+  margin-right: var(--spacing-sm);
+}
+
+.statusBadge {
+  color: white;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 12px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Buttons */
+.button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid var(--border-color);
+  background: var(--background-primary);
+  color: var(--text-primary);
+  border-radius: 0;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.button:hover {
+  border-color: var(--accent-color);
+  color: var(--primary-color);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.buttonPrimary {
+  composes: button;
+  background: var(--accent-color);
+  color: var(--dark-gray);
+  border-color: var(--accent-color);
+  font-weight: 700;
+}
+
+.buttonPrimary:hover {
+  background: #8FB61F;
+  border-color: #8FB61F;
+  color: var(--dark-gray);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.buttonSecondary {
+  composes: button;
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.buttonSecondary:hover {
+  background: #1E3426;
+  border-color: #1E3426;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.buttonDanger {
+  composes: button;
+  border-color: var(--error-color);
+  color: var(--error-color);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.buttonDanger:hover {
+  border-color: #DC2626;
+  color: #DC2626;
+  background: rgba(239, 68, 68, 0.2);
+  transform: scale(1.05);
+}
+
+/* Form elements */
+.formGroup {
+  margin-bottom: var(--spacing-md);
+}
+
+.label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.input {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 2px solid var(--border-color);
+  border-radius: 0;
+  font-size: var(--font-size-base);
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+  background: var(--background-primary);
+  color: var(--text-primary);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(167, 209, 41, 0.1);
+}
+
+/* Layout utilities */
+.section {
+  margin-bottom: var(--spacing-lg);
+  background: var(--background-secondary);
+  border-radius: 0;
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.sectionTitle {
+  margin: 0;
+  color: var(--primary-color);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.titleContainer {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.statusContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-shrink: 0;
+}
+
+/* List layouts */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+  .cardHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-xs);
+  }
+  
+  .statusContainer {
+    justify-content: flex-start;
+  }
+  
+  .card {
+    padding: var(--spacing-sm);
+  }
+  
+  .sectionHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+}
+
+@media (max-width: 480px) {
+  .sectionTitle {
+    font-size: var(--font-size-base);
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-xs);
+  }
+} 

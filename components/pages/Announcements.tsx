@@ -1,18 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { CourseWithAnnouncements, Course } from '../types';
+import { AnnouncementsProps } from '../types';
 import { getCourseCode } from '../utils';
 import { LuMegaphone } from 'react-icons/lu';
-
-interface AnnouncementsProps {
-    coursesWithAnnouncements: CourseWithAnnouncements[];
-    courses: Course[];
-    expandedCourses: Set<number>;
-    showOldAnnouncements: boolean;
-    onToggleCourse: (courseId: number) => void;
-    onToggleOldAnnouncements: () => void;
-}
 
 export default function Announcements({ 
     coursesWithAnnouncements,

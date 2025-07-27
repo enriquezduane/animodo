@@ -1,20 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Assignment, CourseWithAssignments, Course } from '../types';
+import { Assignment, AssignmentsProps } from '../types';
 import { getCourseCode } from '../utils';
 import { LuClipboardList, LuEyeOff, LuEye } from 'react-icons/lu';
-
-interface AssignmentsProps {
-    coursesWithAssignments: CourseWithAssignments[];
-    courses: Course[];
-    expandedCourses: Set<number>;
-    showOverdueAssignments: boolean;
-    showNoDueDates: boolean;
-    onToggleCourse: (courseId: number) => void;
-    onToggleOverdue: () => void;
-    onToggleNoDueDates: () => void;
-}
 
 type StatusFilter = 'unsubmitted' | 'submitted' | 'graded' | 'pending_review' | 'group_submitted';
 

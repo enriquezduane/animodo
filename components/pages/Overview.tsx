@@ -1,15 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Assignment, Announcement, Course } from '../types';
+import { OverviewProps, Assignment } from '../types';
 import { getCourseCode } from '../utils';
 import { LuAlarmClock, LuMegaphone, LuEyeOff, LuEye, LuUndo2, LuLayoutDashboard } from 'react-icons/lu';
-
-interface OverviewProps {
-    courses: Course[];
-    urgentAssignments: (Assignment & { courseId: number })[];
-    recentAnnouncements: (Announcement & { courseId: number })[];
-}
 
 export default function Overview({ courses, urgentAssignments, recentAnnouncements }: OverviewProps) {
     const [ignoredAssignments, setIgnoredAssignments] = useState<Set<number>>(new Set());
