@@ -3,28 +3,23 @@
 import { useState, useEffect } from 'react';
 import { OverviewProps, Assignment } from '../types';
 import { getCourseCode } from '../utils';
+import { storageService } from '../services/storage.service';
 import { LuAlarmClock, LuMegaphone, LuEyeOff, LuEye, LuUndo2, LuLayoutDashboard } from 'react-icons/lu';
 
 export default function Overview({ courses, urgentAssignments, recentAnnouncements }: OverviewProps) {
     const [ignoredAssignments, setIgnoredAssignments] = useState<Set<number>>(new Set());
     const [showIgnored, setShowIgnored] = useState(false);
 
-    // Load ignored assignments from localStorage
+    // Load ignored assignments from storage
     useEffect(() => {
-        const savedIgnored = localStorage.getItem('ignored_assignments');
-        if (savedIgnored) {
-            try {
-                setIgnoredAssignments(new Set(JSON.parse(savedIgnored)));
-            } catch (e) {
-                console.warn('Failed to parse saved ignored assignments');
-            }
-        }
+        const savedIgnored = storageService.getIgnoredAssignments();
+        setIgnoredAssignments(savedIgnored);
     }, []);
 
-    // Save ignored assignments to localStorage
+    // Save ignored assignments to storage
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            localStorage.setItem('ignored_assignments', JSON.stringify([...ignoredAssignments]));
+            storageService.setIgnoredAssignments(ignoredAssignments);
         }, 300);
         return () => clearTimeout(timeoutId);
     }, [ignoredAssignments]);

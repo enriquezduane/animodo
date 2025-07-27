@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FiCalendar, FiExternalLink, FiBook, FiGift, FiLock, FiZap } from 'react-icons/fi';
+import { storageService } from '../components/services/storage.service';
 
 export default function HomePage() {
     const [token, setToken] = useState('');
@@ -26,7 +27,7 @@ export default function HomePage() {
             });
 
             if (response.ok) {
-                localStorage.setItem('canvas_token', token);
+                storageService.setCanvasToken(token);
                 router.push('/dashboard');
             } else {
                 setError('Invalid token. Please check your Canvas access token.');
@@ -39,7 +40,7 @@ export default function HomePage() {
     };
 
     return (
-        <div>
+        <div className="landing-page">
             <nav className="navbar">
                 <div className="nav-container">
                     <Link href="/" className="nav-logo">

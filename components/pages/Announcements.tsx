@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { AnnouncementsProps } from '../types';
 import { getCourseCode } from '../utils';
+import { storageService } from '../services/storage.service';
 import { LuMegaphone } from 'react-icons/lu';
 
 export default function Announcements({ 
@@ -41,26 +42,22 @@ export default function Announcements({
         }
     }, [courses, selectAllCourses]);
 
-    // Load preferences from localStorage
+    // Load preferences from storage
     useEffect(() => {
-        const savedCourses = localStorage.getItem('announcement_selected_courses');
-        const savedSelectAll = localStorage.getItem('announcement_select_all_courses');
+        const savedCourses = storageService.getAnnouncementSelectedCourses();
+        const savedSelectAll = storageService.getAnnouncementSelectAllCourses();
         
-        if (savedCourses && savedSelectAll === 'false') {
-            try {
-                setSelectedCourses(new Set(JSON.parse(savedCourses)));
-                setSelectAllCourses(false);
-            } catch (e) {
-                console.warn('Failed to parse saved announcement course selections');
-            }
+        if (!savedSelectAll) {
+            setSelectedCourses(savedCourses);
+            setSelectAllCourses(false);
         }
     }, []);
 
-    // Save preferences to localStorage (debounced)
+    // Save preferences to storage (debounced)
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            localStorage.setItem('announcement_selected_courses', JSON.stringify([...selectedCourses]));
-            localStorage.setItem('announcement_select_all_courses', selectAllCourses.toString());
+            storageService.setAnnouncementSelectedCourses(selectedCourses);
+            storageService.setAnnouncementSelectAllCourses(selectAllCourses);
         }, 300);
         return () => clearTimeout(timeoutId);
     }, [selectedCourses, selectAllCourses]);

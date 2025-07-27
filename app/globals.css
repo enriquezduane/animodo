@@ -59,6 +59,24 @@
   margin: 0;
 }
 
+/* Remove focus outlines from buttons and interactive elements except on landing page */
+button:focus,
+input[type="button"]:focus,
+input[type="submit"]:focus,
+select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Keep focus styles on landing page for accessibility */
+.landing-page button:focus,
+.landing-page input[type="button"]:focus,
+.landing-page input[type="submit"]:focus,
+.landing-page select:focus {
+  outline: 2px solid var(--accent-color) !important;
+  outline-offset: 2px !important;
+}
+
 html,
 body {
   max-width: 100vw;

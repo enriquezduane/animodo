@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Assignment, AssignmentsProps } from '../types';
 import { getCourseCode } from '../utils';
+import { storageService } from '../services/storage.service';
 import { LuClipboardList, LuEyeOff, LuEye } from 'react-icons/lu';
 
 type StatusFilter = 'unsubmitted' | 'submitted' | 'graded' | 'pending_review' | 'group_submitted';
@@ -53,56 +54,42 @@ export default function Assignments({
         }
     }, [courses, selectAllCourses]);
 
-    // Load preferences from localStorage
+    // Load preferences from storage
     useEffect(() => {
-        const savedStatuses = localStorage.getItem('assignment_status_filters');
-        const savedIgnored = localStorage.getItem('ignored_assignments');
-        const savedCourses = localStorage.getItem('selected_courses');
-        const savedSelectAll = localStorage.getItem('select_all_courses');
+        const savedStatuses = storageService.getAssignmentStatusFilters();
+        const savedIgnored = storageService.getIgnoredAssignments();
+        const savedCourses = storageService.getSelectedCourses();
+        const savedSelectAll = storageService.getSelectAllCourses();
         
-        if (savedStatuses) {
-            try {
-                setSelectedStatuses(new Set(JSON.parse(savedStatuses)));
-            } catch (e) {
-                console.warn('Failed to parse saved status filters');
-            }
+        if (savedStatuses.size > 0) {
+            setSelectedStatuses(new Set(Array.from(savedStatuses) as StatusFilter[]));
         }
-        if (savedIgnored) {
-            try {
-                setIgnoredAssignments(new Set(JSON.parse(savedIgnored)));
-            } catch (e) {
-                console.warn('Failed to parse saved ignored assignments');
-            }
-        }
-        if (savedCourses && savedSelectAll === 'false') {
-            try {
-                setSelectedCourses(new Set(JSON.parse(savedCourses)));
-                setSelectAllCourses(false);
-            } catch (e) {
-                console.warn('Failed to parse saved course selections');
-            }
+        setIgnoredAssignments(savedIgnored);
+        if (!savedSelectAll) {
+            setSelectedCourses(savedCourses);
+            setSelectAllCourses(false);
         }
     }, []);
 
-    // Save preferences to localStorage (debounced)
+    // Save preferences to storage (debounced)
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            localStorage.setItem('assignment_status_filters', JSON.stringify([...selectedStatuses]));
+            storageService.setAssignmentStatusFilters(new Set(Array.from(selectedStatuses)));
         }, 300);
         return () => clearTimeout(timeoutId);
     }, [selectedStatuses]);
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            localStorage.setItem('ignored_assignments', JSON.stringify([...ignoredAssignments]));
+            storageService.setIgnoredAssignments(ignoredAssignments);
         }, 300);
         return () => clearTimeout(timeoutId);
     }, [ignoredAssignments]);
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
-            localStorage.setItem('selected_courses', JSON.stringify([...selectedCourses]));
-            localStorage.setItem('select_all_courses', selectAllCourses.toString());
+            storageService.setSelectedCourses(selectedCourses);
+            storageService.setSelectAllCourses(selectAllCourses);
         }, 300);
         return () => clearTimeout(timeoutId);
     }, [selectedCourses, selectAllCourses]);
