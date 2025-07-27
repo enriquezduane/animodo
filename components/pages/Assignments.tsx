@@ -8,13 +8,13 @@ import { LuClipboardList, LuEyeOff, LuEye } from 'react-icons/lu';
 
 type StatusFilter = 'unsubmitted' | 'submitted' | 'graded' | 'pending_review' | 'group_submitted';
 
-export default function Assignments({ 
+export default function Assignments({
     coursesWithAssignments,
     courses,
-    expandedCourses, 
-    showOverdueAssignments, 
+    expandedCourses,
+    showOverdueAssignments,
     showNoDueDates,
-    onToggleCourse, 
+    onToggleCourse,
     onToggleOverdue,
     onToggleNoDueDates
 }: AssignmentsProps) {
@@ -60,7 +60,7 @@ export default function Assignments({
         const savedIgnored = storageService.getIgnoredAssignments();
         const savedCourses = storageService.getSelectedCourses();
         const savedSelectAll = storageService.getSelectAllCourses();
-        
+
         if (savedStatuses.size > 0) {
             setSelectedStatuses(new Set(Array.from(savedStatuses) as StatusFilter[]));
         }
@@ -103,18 +103,18 @@ export default function Assignments({
 
     const getTimeRemaining = (dueDateString: string | null) => {
         if (!dueDateString) return '';
-        
+
         const now = new Date();
         const dueDate = new Date(dueDateString);
         const timeDiff = dueDate.getTime() - now.getTime();
         const absoluteDiff = Math.abs(timeDiff);
-        
+
         const days = Math.floor(absoluteDiff / (1000 * 60 * 60 * 24));
         if (days > 0) return `${days}d`;
-        
+
         const hours = Math.floor((absoluteDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         if (hours > 0) return `${hours}h`;
-        
+
         const minutes = Math.floor((absoluteDiff % (1000 * 60 * 60)) / (1000 * 60));
         return `${minutes}m`;
     };
@@ -123,62 +123,62 @@ export default function Assignments({
         if (assignment.has_submitted_submissions && !assignment.submission) {
             return 'group_submitted';
         }
-        
+
         if (!assignment.submission) return 'unsubmitted';
-        
+
         const { workflow_state, score } = assignment.submission;
-        
+
         if (workflow_state === 'graded' && score !== null) {
             return 'graded';
         }
-        
+
         if (workflow_state === 'submitted' || workflow_state === 'pending_review') {
             return workflow_state === 'submitted' ? 'submitted' : 'pending_review';
         }
-        
+
         return 'unsubmitted';
     };
 
     const getStatusColor = (assignment: Assignment) => {
         const status = getSubmissionStatus(assignment);
-        
+
         if (status === 'unsubmitted') {
             if (!assignment.due_at) return '#6c757d';
-            
+
             const now = new Date();
             const dueDate = new Date(assignment.due_at);
             const timeDiff = dueDate.getTime() - now.getTime();
             const hoursLeft = timeDiff / (1000 * 60 * 60);
-            
+
             if (timeDiff < 0) return '#dc3545';
             if (hoursLeft < 24) return '#fd7e14';
             return '#ffc107';
         }
-        
+
         if (status === 'submitted') return '#28a745';
         if (status === 'pending_review') return '#17a2b8';
         if (status === 'graded') return '#6f42c1';
         if (status === 'group_submitted') return '#20c997';
-        
+
         return '#6c757d';
     };
 
     const getCombinedStatusLabel = (assignment: Assignment) => {
         const status = getSubmissionStatus(assignment);
-        
+
         if (status === 'unsubmitted') {
             if (!assignment.due_at) return 'Low Priority';
-            
+
             const now = new Date();
             const dueDate = new Date(assignment.due_at);
             const timeDiff = dueDate.getTime() - now.getTime();
             const hoursLeft = timeDiff / (1000 * 60 * 60);
-            
+
             if (timeDiff < 0) {
                 // Overdue
                 const overdueDays = Math.floor(Math.abs(timeDiff) / (1000 * 60 * 60 * 24));
                 const overdueHours = Math.floor((Math.abs(timeDiff) % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                
+
                 if (overdueDays > 0) {
                     return `OVERDUE (by ${overdueDays}${overdueDays === 1 ? ' day' : ' days'})!`;
                 } else if (overdueHours > 0) {
@@ -188,7 +188,7 @@ export default function Assignments({
                     return `OVERDUE (by ${overdueMinutes}${overdueMinutes === 1 ? ' min' : ' mins'})!`;
                 }
             }
-            
+
             if (hoursLeft < 24) {
                 const hours = Math.floor(hoursLeft);
                 const minutes = Math.floor((hoursLeft % 1) * 60);
@@ -198,44 +198,44 @@ export default function Assignments({
                     return `ALMOST DUE (due in ${minutes}${minutes === 1 ? ' min' : ' mins'})`;
                 }
             }
-            
+
             const days = Math.floor(hoursLeft / 24);
             return `DUE SOON (due in ${days}${days === 1 ? ' day' : ' days'})`;
         }
-        
+
         const statusLabels = {
             'submitted': 'Submitted',
             'pending_review': 'Pending Review',
             'graded': 'Graded',
             'group_submitted': 'Group Submitted'
         };
-        
+
         return statusLabels[status] || status;
     };
 
     const getStatusLabel = (assignment: Assignment) => {
         const status = getSubmissionStatus(assignment);
-        
+
         if (status === 'unsubmitted') {
             if (!assignment.due_at) return 'Low Priority';
-            
+
             const now = new Date();
             const dueDate = new Date(assignment.due_at);
             const timeDiff = dueDate.getTime() - now.getTime();
             const hoursLeft = timeDiff / (1000 * 60 * 60);
-            
+
             if (timeDiff < 0) return 'Overdue!';
             if (hoursLeft < 24) return 'Almost Due';
             return 'Due Soon';
         }
-        
+
         const statusLabels = {
             'submitted': 'Submitted',
             'pending_review': 'Pending Review',
             'graded': 'Graded',
             'group_submitted': 'Group Submitted'
         };
-        
+
         return statusLabels[status] || status;
     };
 
@@ -300,7 +300,7 @@ export default function Assignments({
 
     // Create flat list of all assignments with course info
     const allAssignments: (Assignment & { courseId: number; courseName: string })[] = [];
-    
+
     coursesWithAssignments.forEach(course => {
         course.assignments.forEach(assignment => {
             allAssignments.push({
@@ -317,24 +317,24 @@ export default function Assignments({
             // Always apply status filter first
             const status = getSubmissionStatus(assignment);
             if (!selectedStatuses.has(status)) return false;
-            
+
             // Always apply course filter
             if (!selectedCourses.has(assignment.courseId)) return false;
-            
+
             // Now apply exclusive filters
             const now = new Date();
             const maxDaysOverdue = 10;
-            
+
             // If "Show ignored" is active, show ONLY ignored assignments (but still respecting status/course filters)
             if (showIgnored) {
                 return ignoredAssignments.has(assignment.id);
             }
-            
+
             // If "Show no due dates" is active, show ONLY assignments with no due dates (but still respecting status/course filters)
             if (showNoDueDates) {
                 return !assignment.due_at;
             }
-            
+
             // If "Show > 10 days overdue" is active, show ONLY assignments > 10 days overdue (but still respecting status/course filters)
             if (showOverdueAssignments) {
                 if (!assignment.due_at) return false;
@@ -342,21 +342,21 @@ export default function Assignments({
                 const daysFromNow = (dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
                 return daysFromNow < -maxDaysOverdue;
             }
-            
+
             // Normal filtering when no exclusive filters are active
             // Exclude ignored assignments (unless showing ignored)
             if (ignoredAssignments.has(assignment.id)) return false;
-            
+
             // Exclude assignments with no due dates (unless showing them)
             if (!assignment.due_at) return false;
-            
+
             // Exclude assignments > 10 days overdue (unless showing them)
             if (assignment.due_at) {
                 const dueDate = new Date(assignment.due_at);
                 const daysFromNow = (dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
                 if (daysFromNow < -maxDaysOverdue) return false;
             }
-            
+
             return true;
         })
         .sort((a, b) => {
@@ -370,11 +370,11 @@ export default function Assignments({
     return (
         <div className="assignments">
             <h1><LuClipboardList size={24} /> All Assignments</h1>
-            
+
             <div className="filters">
                 <div className="filter-row">
                     <div className="status-filter" ref={statusDropdownRef}>
-                        <button 
+                        <button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setShowStatusDropdown(!showStatusDropdown);
@@ -387,8 +387,8 @@ export default function Assignments({
                         {showStatusDropdown && (
                             <div className="status-dropdown">
                                 {statusOptions.map(option => (
-                                    <label 
-                                        key={option.value} 
+                                    <label
+                                        key={option.value}
                                         className="status-option"
                                         onClick={(e) => e.stopPropagation()}
                                     >
@@ -400,8 +400,8 @@ export default function Assignments({
                                                 toggleStatusFilter(option.value);
                                             }}
                                         />
-                                        <span 
-                                            className="status-color-dot" 
+                                        <span
+                                            className="status-color-dot"
                                             style={{ backgroundColor: option.color }}
                                         ></span>
                                         {option.label}
@@ -412,7 +412,7 @@ export default function Assignments({
                     </div>
 
                     <div className="course-filter" ref={courseDropdownRef}>
-                        <button 
+                        <button
                             onClick={(e) => {
                                 e.stopPropagation();
                                 setShowCourseDropdown(!showCourseDropdown);
@@ -424,7 +424,7 @@ export default function Assignments({
                         </button>
                         {showCourseDropdown && (
                             <div className="course-dropdown">
-                                <label 
+                                <label
                                     className="select-all-course-label"
                                     onClick={(e) => e.stopPropagation()}
                                 >
@@ -439,8 +439,8 @@ export default function Assignments({
                                     Select All
                                 </label>
                                 {courses.map(course => (
-                                    <label 
-                                        key={course.id} 
+                                    <label
+                                        key={course.id}
                                         className="course-option"
                                         onClick={(e) => e.stopPropagation()}
                                     >
@@ -461,19 +461,19 @@ export default function Assignments({
                 </div>
 
                 <div className="filter-row">
-                    <button 
+                    <button
                         onClick={onToggleOverdue}
                         className={`filter-btn ${showOverdueAssignments ? 'active' : ''}`}
                     >
                         {showOverdueAssignments ? '✓ Only > 10 days overdue' : 'Only > 10 days overdue'}
                     </button>
-                    <button 
+                    <button
                         onClick={onToggleNoDueDates}
                         className={`filter-btn ${showNoDueDates ? 'active' : ''}`}
                     >
                         {showNoDueDates ? '✓ Only no due dates' : 'Only no due dates'}
                     </button>
-                    <button 
+                    <button
                         onClick={() => setShowIgnored(!showIgnored)}
                         className={`filter-btn ${showIgnored ? 'active' : ''}`}
                     >
@@ -487,23 +487,23 @@ export default function Assignments({
                     filteredAssignments.map(assignment => {
                         const statusLabel = getStatusLabel(assignment);
                         const statusColor = getStatusColor(assignment);
-                        
+
                         return (
                             <div key={assignment.id} className="assignment-card">
                                 <div className="assignment-header">
                                     <div className="assignment-title-container">
                                         <span className="course-badge">{getCourseCode(assignment.courseName)}</span>
-                                        <a 
-                                            href={assignment.html_url} 
-                                            target="_blank" 
-                                            rel="noreferrer" 
+                                        <a
+                                            href={assignment.html_url}
+                                            target="_blank"
+                                            rel="noreferrer"
                                             className="assignment-title"
                                         >
                                             {assignment.name}
                                         </a>
                                     </div>
                                     <div className="status-container">
-                                        <span 
+                                        <span
                                             className="status-badge"
                                             style={{ backgroundColor: statusColor }}
                                         >
@@ -514,8 +514,8 @@ export default function Assignments({
                                             className={`ignore-btn ${ignoredAssignments.has(assignment.id) ? 'ignored' : ''}`}
                                             title={ignoredAssignments.has(assignment.id) ? 'Unignore assignment' : 'Ignore assignment'}
                                         >
-                                            {ignoredAssignments.has(assignment.id) ? 
-                                                <LuEye size={14} /> : 
+                                            {ignoredAssignments.has(assignment.id) ?
+                                                <LuEye size={14} /> :
                                                 <LuEyeOff size={14} />
                                             }
                                         </button>
@@ -538,7 +538,6 @@ export default function Assignments({
                 .assignments {
                     padding: var(--spacing-lg);
                     background: var(--background-primary);
-                    min-height: 100vh;
                 }
                 
                 .assignments h1 {

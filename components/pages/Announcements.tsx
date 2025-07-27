@@ -243,7 +243,6 @@ export default function Announcements({
                 .announcements {
                     padding: var(--spacing-lg);
                     background: var(--background-primary);
-                    min-height: 100vh;
                 }
 
                 .course-badge {

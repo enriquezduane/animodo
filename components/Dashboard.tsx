@@ -164,6 +164,7 @@ export default function DashboardClient(): React.ReactElement {
                     overflow-y: auto;
                     background: var(--background-primary);
                     min-height: 100vh;
+                    max-width: none;
                 }
                 
                 /* Responsive design */

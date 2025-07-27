@@ -331,7 +331,6 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                 .overview {
                     padding: var(--spacing-lg);
                     background: var(--background-primary);
-                    min-height: 100vh;
                 }
                 
                 .overview-header {
