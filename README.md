@@ -1,5 +1,7 @@
 # Animodo
 
+<img width="1476" height="855" alt="image" src="https://github.com/user-attachments/assets/8dc355b5-bd2a-47f0-9303-d533611a556d" />
+
 Animodo is a student dashboard that provides a centralized view of your Canvas courses, assignments, and announcements. It is designed to be a fast and user-friendly alternative to the default Canvas dashboard.
 
 ## Features
