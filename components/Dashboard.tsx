@@ -325,8 +325,6 @@ export default function DashboardClient() {
                         courses={courses}
                         urgentAssignments={urgentAssignments}
                         recentAnnouncements={recentAnnouncements}
-                        isRefreshing={isRefreshing}
-                        onRefresh={handleRefresh}
                     />
                 );
             case 'assignments':
@@ -376,11 +374,13 @@ export default function DashboardClient() {
 
     return (
         <div className="dashboard-layout">
-            <Sidebar
+                        <Sidebar 
                 userName={userName}
                 onLogout={handleLogout}
                 onSectionChange={setCurrentSection}
                 currentSection={currentSection}
+                onRefresh={handleRefresh}
+                isRefreshing={isRefreshing}
             />
             <main className="main-content">
                 {renderCurrentSection()}

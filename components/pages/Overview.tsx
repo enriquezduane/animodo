@@ -3,17 +3,15 @@
 import { useState, useEffect } from 'react';
 import { Assignment, Announcement, Course } from '../types';
 import { getCourseCode } from '../utils';
-import { LuAlarmClock, LuMegaphone, LuEyeOff, LuEye, LuRefreshCw, LuUndo2, LuLayoutDashboard } from 'react-icons/lu';
+import { LuAlarmClock, LuMegaphone, LuEyeOff, LuEye, LuUndo2, LuLayoutDashboard } from 'react-icons/lu';
 
 interface OverviewProps {
     courses: Course[];
     urgentAssignments: (Assignment & { courseId: number })[];
     recentAnnouncements: (Announcement & { courseId: number })[];
-    onRefresh?: () => void;
-    isRefreshing?: boolean;
 }
 
-export default function Overview({ courses, urgentAssignments, recentAnnouncements, onRefresh, isRefreshing }: OverviewProps) {
+export default function Overview({ courses, urgentAssignments, recentAnnouncements }: OverviewProps) {
     const [ignoredAssignments, setIgnoredAssignments] = useState<Set<number>>(new Set());
     const [showIgnored, setShowIgnored] = useState(false);
 
@@ -193,17 +191,6 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
         <div className="overview">
             <div className="overview-header">
                 <h1><LuLayoutDashboard size={24} /> Overview</h1>
-                {onRefresh && (
-                    <button 
-                        onClick={onRefresh}
-                        disabled={isRefreshing}
-                        className={`refresh-btn ${isRefreshing ? 'refreshing' : ''}`}
-                        title="Refresh data to get latest assignments and announcements"
-                    >
-                        <LuRefreshCw size={20} />
-                        {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
-                    </button>
-                )}
             </div>
             
             <div className="overview-section">
@@ -232,9 +219,12 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                             return (
                                 <div key={assignment.id} className="assignment-card">
                                     <div className="assignment-header">
-                                        <a href={assignment.html_url} target="_blank" rel="noreferrer" className="assignment-title">
-                                            [{courseCode}] {assignment.name}
-                                        </a>
+                                        <div className="assignment-title-container">
+                                            <span className="course-badge">{courseCode}</span>
+                                            <a href={assignment.html_url} target="_blank" rel="noreferrer" className="assignment-title">
+                                                {assignment.name}
+                                            </a>
+                                        </div>
                                         <div className="status-container">
                                             <span 
                                                 className="status-badge" 
@@ -282,9 +272,12 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                                 return (
                                     <div key={assignment.id} className="assignment-card ignored-card">
                                         <div className="assignment-header">
-                                            <a href={assignment.html_url} target="_blank" rel="noreferrer" className="assignment-title">
-                                                [{courseCode}] {assignment.name}
-                                            </a>
+                                            <div className="assignment-title-container">
+                                                <span className="course-badge">{courseCode}</span>
+                                                <a href={assignment.html_url} target="_blank" rel="noreferrer" className="assignment-title">
+                                                    {assignment.name}
+                                                </a>
+                                            </div>
                                             <div className="status-container">
                                                 <span 
                                                     className="status-badge" 
@@ -326,9 +319,12 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                             return (
                                 <div key={announcement.id} className="announcement-card">
                                     <div className="announcement-header">
-                                        <a href={announcement.url} target="_blank" rel="noreferrer" className="announcement-title">
-                                            [{courseCode}] {announcement.title}
-                                        </a>
+                                        <div className="announcement-title-container">
+                                            <span className="course-badge">{courseCode}</span>
+                                            <a href={announcement.url} target="_blank" rel="noreferrer" className="announcement-title">
+                                                {announcement.title}
+                                            </a>
+                                        </div>
                                     </div>
                                     <div className="announcement-meta">
                                         Posted: {formatDate(announcement.posted_at)} ({getTimeAgo(announcement.posted_at)})
@@ -368,47 +364,7 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                     gap: var(--spacing-sm);
                 }
 
-                .refresh-btn {
-                    background: var(--accent-color);
-                    color: white;
-                    padding: var(--spacing-xs) var(--spacing-md);
-                    border-radius: 0;
-                    border: none;
-                    cursor: pointer;
-                    font-size: var(--font-size-sm);
-                    font-weight: 600;
-                    display: flex;
-                    align-items: center;
-                    gap: var(--spacing-xs);
-                    box-shadow: var(--shadow-sm);
-                    transition: all 0.2s ease;
-                }
 
-                .refresh-btn:hover:not(:disabled) {
-                    background: #8FB61F;
-                    transform: translateY(-2px);
-                    box-shadow: var(--shadow-md);
-                }
-
-                .refresh-btn:disabled {
-                    background: var(--border-color);
-                    color: var(--text-secondary);
-                    cursor: not-allowed;
-                    opacity: 0.7;
-                }
-
-                .refresh-btn.refreshing {
-                    background: #8FB61F;
-                }
-
-                .refresh-btn.refreshing svg {
-                    animation: spin 1s linear infinite;
-                }
-
-                @keyframes spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
 
                 .overview-section {
                     margin-bottom: var(--spacing-lg);
@@ -565,6 +521,28 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                     text-decoration: underline;
                 }
 
+                .course-badge {
+                    background: var(--accent-color);
+                    color: var(--dark-gray);
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: 0;
+                    font-size: var(--font-size-xs);
+                    font-weight: 600;
+                    white-space: nowrap;
+                    box-shadow: var(--shadow-sm);
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    margin-right: var(--spacing-sm);
+                    flex-shrink: 0;
+                }
+
+                .assignment-title-container,
+                .announcement-title-container {
+                    display: flex;
+                    align-items: center;
+                    flex: 1;
+                }
+
                 .status-badge {
                     color: white;
                     padding: var(--spacing-xs) var(--spacing-sm);
@@ -578,24 +556,24 @@ export default function Overview({ courses, urgentAssignments, recentAnnouncemen
                 }
 
                 .ignore-btn {
-                    padding: var(--spacing-xs);
+                    padding: var(--spacing-xs) var(--spacing-sm);
                     border: 2px solid var(--border-color);
                     background: var(--background-primary);
                     border-radius: 0;
                     cursor: pointer;
+                    font-size: var(--font-size-xs);
                     color: var(--text-primary);
                     transition: all 0.2s ease;
                     display: flex;
                     align-items: center;
-                    justify-content: center;
-                    min-width: 28px;
-                    height: 28px;
+                    gap: var(--spacing-xs);
+                    font-weight: 500;
                 }
 
                 .ignore-btn:hover {
                     border-color: var(--accent-color);
                     color: var(--primary-color);
-                    transform: scale(1.1);
+                    transform: translateY(-1px);
                     box-shadow: var(--shadow-sm);
                 }
 

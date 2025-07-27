@@ -227,18 +227,21 @@ export default function Announcements({
                     filteredAnnouncements.map(announcement => (
                         <div key={announcement.id} className="announcement-card">
                             <div className="announcement-header">
-                                <a 
-                                    href={announcement.url} 
-                                    target="_blank" 
-                                    rel="noreferrer" 
-                                    className="announcement-title"
-                                >
-                                    {announcement.title}
-                                </a>
+                                <div className="announcement-title-container">
+                                    <span className="course-badge">{getCourseCode(announcement.courseName)}</span>
+                                    <a 
+                                        href={announcement.url} 
+                                        target="_blank" 
+                                        rel="noreferrer" 
+                                        className="announcement-title"
+                                    >
+                                        {announcement.title}
+                                    </a>
+                                </div>
                             </div>
                             <div className="announcement-meta">
                                 <div className="posted-date">
-                                    [{getCourseCode(announcement.courseName)}] Posted: {formatAnnouncementDate(announcement.posted_at)}
+                                    Posted: {formatAnnouncementDate(announcement.posted_at)}
                                 </div>
                             </div>
                         </div>
@@ -253,6 +256,27 @@ export default function Announcements({
                     padding: var(--spacing-lg);
                     background: var(--background-primary);
                     min-height: 100vh;
+                }
+
+                .course-badge {
+                    background: var(--accent-color);
+                    color: var(--dark-gray);
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: 0;
+                    font-size: var(--font-size-xs);
+                    font-weight: 600;
+                    white-space: nowrap;
+                    box-shadow: var(--shadow-sm);
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    margin-right: var(--spacing-sm);
+                    flex-shrink: 0;
+                }
+
+                .announcement-title-container {
+                    display: flex;
+                    align-items: center;
+                    flex: 1;
                 }
                 
                 .announcements h1 {

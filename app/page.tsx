@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { FiCalendar, FiExternalLink, FiBook, FiGift, FiLock, FiZap } from 'react-icons/fi';
 
 export default function HomePage() {
     const [token, setToken] = useState('');
@@ -53,38 +54,104 @@ export default function HomePage() {
             </nav>
 
             <main className="main-content">
-                <div className="landing-container">
-                    <h1>Animodo Dashboard</h1>
-
-                    <form onSubmit={handleSubmit} className="token-form">
-                        <div className="form-group">
-                            <label htmlFor="token">Canvas Access Token:</label>
-                            <input
-                                type="text"
-                                id="token"
-                                value={token}
-                                onChange={(e) => setToken(e.target.value)}
-                                placeholder="Enter your Canvas access token"
-                                required
+                {/* Hero Section */}
+                <div className="hero-section">
+                    <div className="hero-content">
+                        <div className="hero-text">
+                            <h1>Never Miss Another Assignment</h1>
+                            <p className="hero-subtitle">
+                                Brings all your courses, assignments, and announcements together in one beautiful, organized view.
+                            </p>
+                        </div>
+                        <div className="hero-image">
+                            <Image
+                                src="/animodo-landing.png"
+                                alt="Animodo Dashboard Preview"
+                                width={600}
+                                height={400}
+                                priority
+                                className="landing-image"
                             />
                         </div>
-                        <button type="submit" disabled={isValidating} className="access-btn">
-                            {isValidating ? 'Validating...' : 'Access Dashboard'}
-                        </button>
-                        {error && <p className="error">{error}</p>}
-                    </form>
-
-                    <div className="tutorial-link">
-                        <Link href="/tutorial">How to find your Canvas access token</Link>
                     </div>
+                </div>
 
-                    <div className="marketing-content">
-                        <ul>
-                            <li>Never miss an assignment again!</li>
-                            <li>See all your assignments and announcements <strong>all in one place</strong></li>
-                            <li>Free, and Open Source!</li>
-                            <li>Secure. Data is only stored locally.</li>
-                        </ul>
+                {/* CTA Section */}
+                <div className="cta-section-compact">
+                    <div className="cta-container-compact">
+                        <h2>Let's Hook You up to Your Dashboard!</h2>
+                        <p>Just enter your Canvas access token to unlock your personalized dashboard</p>
+
+                        <form onSubmit={handleSubmit} className="token-form-compact">
+                            <div className="form-group-compact">
+                                <label htmlFor="token">Canvas Access Token:</label>
+                                <input
+                                    type="text"
+                                    id="token"
+                                    value={token}
+                                    onChange={(e) => setToken(e.target.value)}
+                                    placeholder="Paste your Canvas access token here"
+                                    required
+                                />
+                            </div>
+                            <button type="submit" disabled={isValidating} className="access-btn-compact">
+                                {isValidating ? 'Validating...' : 'Access Your Dashboard'}
+                            </button>
+                            {error && <p className="error">{error}</p>}
+                        </form>
+
+                        <div className="tutorial-link">
+                            <Link href="/tutorial">Need help finding your Canvas access token?</Link>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Features Section */}
+                <div className="features-section">
+                    <h2>Why You Might Love Animodo</h2>
+                    <div className="features-grid">
+                        <div className="feature-card">
+                            <div className="feature-icon">
+                                <FiCalendar />
+                            </div>
+                            <h3>Clear Due Dates</h3>
+                            <p>See exactly when every assignment is due with visual indicators that make deadlines impossible to miss.</p>
+                        </div>
+                        <div className="feature-card">
+                            <div className="feature-icon">
+                                <FiExternalLink />
+                            </div>
+                            <h3>Direct Canvas Links</h3>
+                            <p>Click any assignment or announcement to go directly to the original post in Canvas.</p>
+                        </div>
+                        <div className="feature-card">
+                            <div className="feature-icon">
+                                <FiBook />
+                            </div>
+                            <h3>All Courses, One Place</h3>
+                            <p>View assignments and announcements from all your courses in a unified, easy-to-scan dashboard.</p>
+                        </div>
+                        <div className="feature-card">
+                            <div className="feature-icon">
+                                <FiGift />
+                            </div>
+                            <h3>Free & Open Source</h3>
+                            <p>Completely free to use with transparent, open-source code.</p>
+                        </div>
+                        <div className="feature-card">
+                            <div className="feature-icon">
+                                <FiLock />
+                            </div>
+                            <h3>Privacy First</h3>
+                            <p>Your data stays on your device. Animodo doesn't store your information.</p>
+                        </div>
+                        <div className="feature-card">
+                            <div className="feature-icon">
+                                <FiZap />
+                            </div>
+                            <h3>Blazing Fast</h3>
+                            <p>Get instant access to all your course information without waiting for Canvas to load multiple pages.</p>
+                        </div>
                     </div>
                 </div>
             </main>

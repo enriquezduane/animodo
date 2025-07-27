@@ -501,7 +501,7 @@ export default function Assignments({
                         onClick={() => setShowIgnored(!showIgnored)}
                         className={`filter-btn ${showIgnored ? 'active' : ''}`}
                     >
-                        {showIgnored ? '✓ Only ignored' : 'Only ignored'}
+                        {showIgnored ? `✓ Only ignored (${ignoredAssignments.size})` : `Only ignored (${ignoredAssignments.size})`}
                     </button>
                 </div>
             </div>
@@ -515,44 +515,40 @@ export default function Assignments({
                         return (
                             <div key={assignment.id} className="assignment-card">
                                 <div className="assignment-header">
-                                    <a 
-                                        href={assignment.html_url} 
-                                        target="_blank" 
-                                        rel="noreferrer" 
-                                        className="assignment-title"
-                                    >
-                                        {assignment.name}
-                                    </a>
+                                    <div className="assignment-title-container">
+                                        <span className="course-badge">{getCourseCode(assignment.courseName)}</span>
+                                        <a 
+                                            href={assignment.html_url} 
+                                            target="_blank" 
+                                            rel="noreferrer" 
+                                            className="assignment-title"
+                                        >
+                                            {assignment.name}
+                                        </a>
+                                    </div>
                                     <div className="status-container">
-                                        <span className="course-name">
-                                            {getCourseCode(assignment.courseName)}
-                                        </span>
                                         <span 
                                             className="status-badge"
                                             style={{ backgroundColor: statusColor }}
                                         >
                                             {getCombinedStatusLabel(assignment)}
                                         </span>
+                                        <button
+                                            onClick={() => toggleIgnoreAssignment(assignment.id)}
+                                            className={`ignore-btn ${ignoredAssignments.has(assignment.id) ? 'ignored' : ''}`}
+                                            title={ignoredAssignments.has(assignment.id) ? 'Unignore assignment' : 'Ignore assignment'}
+                                        >
+                                            {ignoredAssignments.has(assignment.id) ? 
+                                                <LuEye size={14} /> : 
+                                                <LuEyeOff size={14} />
+                                            }
+                                        </button>
                                     </div>
                                 </div>
                                 <div className="assignment-meta">
                                     <div className="due-date">
                                         Due: {formatDate(assignment.due_at)}
                                     </div>
-                                    <button
-                                        onClick={() => toggleIgnoreAssignment(assignment.id)}
-                                        className={`ignore-btn ${ignoredAssignments.has(assignment.id) ? 'ignored' : ''}`}
-                                        title={ignoredAssignments.has(assignment.id) ? 'Unignore assignment' : 'Ignore assignment'}
-                                    >
-                                        {ignoredAssignments.has(assignment.id) ? 
-                                            <>
-                                                <LuEye size={12} /> Unignore
-                                            </> : 
-                                            <>
-                                                <LuEyeOff size={12} /> Ignore
-                                            </>
-                                        }
-                                    </button>
                                 </div>
                             </div>
                         );
@@ -855,6 +851,27 @@ export default function Assignments({
                     border: 1px solid var(--border-color);
                 }
 
+                .course-badge {
+                    background: var(--accent-color);
+                    color: var(--dark-gray);
+                    padding: var(--spacing-xs) var(--spacing-sm);
+                    border-radius: 0;
+                    font-size: var(--font-size-xs);
+                    font-weight: 600;
+                    white-space: nowrap;
+                    box-shadow: var(--shadow-sm);
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    margin-right: var(--spacing-sm);
+                    flex-shrink: 0;
+                }
+
+                .assignment-title-container {
+                    display: flex;
+                    align-items: center;
+                    flex: 1;
+                }
+
                 .status-badge {
                     color: white;
                     padding: var(--spacing-xs) var(--spacing-sm);
@@ -894,24 +911,24 @@ export default function Assignments({
                 }
 
                 .ignore-btn {
-                    padding: var(--spacing-xs) var(--spacing-sm);
+                    padding: var(--spacing-xs);
                     border: 2px solid var(--border-color);
                     background: var(--background-primary);
                     border-radius: 0;
                     cursor: pointer;
-                    font-size: var(--font-size-xs);
                     color: var(--text-primary);
                     transition: all 0.2s ease;
                     display: flex;
                     align-items: center;
-                    gap: var(--spacing-xs);
-                    font-weight: 500;
+                    justify-content: center;
+                    min-width: 28px;
+                    height: 28px;
                 }
 
                 .ignore-btn:hover {
                     border-color: var(--accent-color);
                     color: var(--primary-color);
-                    transform: translateY(-1px);
+                    transform: scale(1.1);
                     box-shadow: var(--shadow-sm);
                 }
 

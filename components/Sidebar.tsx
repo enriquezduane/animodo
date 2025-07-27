@@ -1,16 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { LuLayoutDashboard, LuClipboardList, LuMegaphone, LuLogOut } from 'react-icons/lu';
+import { LuLayoutDashboard, LuClipboardList, LuMegaphone, LuLogOut, LuRefreshCw } from 'react-icons/lu';
 
 interface SidebarProps {
     userName: string | null;
     onLogout: () => void;
     onSectionChange: (section: string) => void;
     currentSection: string;
+    onRefresh: () => void;
+    isRefreshing: boolean;
 }
 
-export default function Sidebar({ userName, onLogout, onSectionChange, currentSection }: SidebarProps) {
+export default function Sidebar({ userName, onLogout, onSectionChange, currentSection, onRefresh, isRefreshing }: SidebarProps) {
     const getFormattedFirstName = (fullName: string) => {
         const parts = fullName.split(',');
         if (parts.length < 2) return fullName;
@@ -30,6 +32,11 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
     return (
         <div className="sidebar">
             <div className="sidebar-header">
+                <img 
+                    src="/animodo-logo.png" 
+                    alt="Animodo" 
+                    className="sidebar-logo"
+                />
                 <h2>Welcome, {userName ? getFormattedFirstName(userName) : 'User'}!</h2>
             </div>
 
@@ -47,6 +54,18 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
             </nav>
 
             <div className="sidebar-footer">
+                <div className="refresh-section">
+                    <p className="sync-note">Data is not synced automatically</p>
+                    <button 
+                        onClick={onRefresh}
+                        disabled={isRefreshing}
+                        className={`refresh-btn ${isRefreshing ? 'refreshing' : ''}`}
+                        title="Refresh data to get latest assignments and announcements"
+                    >
+                        <LuRefreshCw size={16} />
+                        {isRefreshing ? 'Refreshing...' : 'Refresh Data'}
+                    </button>
+                </div>
                 <button onClick={onLogout} className="logout-btn">
                     <LuLogOut size={16} /> Exit
                 </button>
@@ -71,6 +90,17 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
                     padding: var(--spacing-xl);
                     border-bottom: 2px solid var(--border-color);
                     background: var(--background-primary);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: var(--spacing-md);
+                }
+                
+                .sidebar-logo {
+                    width: 120px;
+                    height: auto;
+                    max-width: 100%;
+                    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
                 }
                 
                 .sidebar-header h2 {
@@ -78,6 +108,7 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
                     font-size: var(--font-size-lg);
                     color: var(--primary-color);
                     font-weight: 600;
+                    text-align: center;
                 }
                 
                 .sidebar-nav {
@@ -134,6 +165,66 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
                     padding: var(--spacing-xl);
                     border-top: 2px solid var(--border-color);
                     background: var(--background-primary);
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--spacing-md);
+                }
+
+                .refresh-section {
+                    display: flex;
+                    flex-direction: column;
+                    gap: var(--spacing-sm);
+                }
+
+                .sync-note {
+                    font-size: var(--font-size-xs);
+                    color: var(--text-secondary);
+                    text-align: center;
+                    margin: 0;
+                    line-height: 1.4;
+                }
+
+                .refresh-btn {
+                    width: 100%;
+                    padding: var(--spacing-sm);
+                    background: var(--accent-color);
+                    color: var(--dark-gray);
+                    border: none;
+                    border-radius: 0;
+                    cursor: pointer;
+                    font-size: var(--font-size-xs);
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    gap: var(--spacing-xs);
+                    justify-content: center;
+                    transition: all 0.2s ease;
+                    box-shadow: var(--shadow-sm);
+                }
+
+                .refresh-btn:hover:not(:disabled) {
+                    background: #8FB61F;
+                    transform: translateY(-1px);
+                    box-shadow: var(--shadow-md);
+                }
+
+                .refresh-btn:disabled {
+                    opacity: 0.7;
+                    cursor: not-allowed;
+                }
+
+                .refresh-btn.refreshing {
+                    background: var(--text-secondary);
+                    color: white;
+                }
+
+                .refresh-btn.refreshing svg {
+                    animation: spin 1s linear infinite;
+                }
+
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
                 }
                 
                 .logout-btn {
@@ -175,6 +266,10 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
                         padding: var(--spacing-lg);
                     }
                     
+                    .sidebar-logo {
+                        width: 100px;
+                    }
+                    
                     .sidebar-item {
                         padding: var(--spacing-sm) var(--spacing-lg);
                         font-size: var(--font-size-xs);
@@ -192,6 +287,14 @@ export default function Sidebar({ userName, onLogout, onSectionChange, currentSe
                         position: relative;
                         border-right: none;
                         border-bottom: 2px solid var(--border-color);
+                    }
+                    
+                    .sidebar-header {
+                        padding: var(--spacing-md);
+                    }
+                    
+                    .sidebar-logo {
+                        width: 80px;
                     }
                     
                     .sidebar-nav {

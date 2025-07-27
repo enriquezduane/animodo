@@ -10,6 +10,11 @@ const poppins = Poppins({
 export const metadata = {
   title: 'Animodo Dashboard',
   description: 'Canvas dashboard application',
+  icons: {
+    icon: '/animodo-icon.png',
+    shortcut: '/animodo-icon.png',
+    apple: '/animodo-icon.png',
+  },
 }
 
 export default function RootLayout({
